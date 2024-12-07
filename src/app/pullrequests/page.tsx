@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
-import PinnedSection from '../components/PinnedSection/PinnedSection';
+import PinnedSection from '../components/PinnedPRs/PinnedPRs';
 import ShowcaseSelectedPR from '../components/ShowcaseSelectedPR/ShowcaseSelectedPR';
 import SelectPRsToAdd from '../components/SelectPRsToAdd/SelectPRsToAdd';
 
