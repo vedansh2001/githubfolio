@@ -1,20 +1,78 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// Prisma Client generator
 generator client {
   provider = "prisma-client-js"
 }
 
+// Database connection
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// User model
 model User {
-  id        Int     @id  @default(autoincrement())
-  username  String  @unique
-  password  String
+  id              Int             @id @default(autoincrement())
+  name            String          @default("Unnamed User")
+  githubUsername  String          @unique @default("github_user")
+  githubFullName  String          @default("")
+  email           String          @unique @default("user@example.com")
+  password        String
+  bio             String?
+  location        String?
+  followers       Int             @default(0)
+  following       Int             @default(0)
+  publicRepos     Int             @default(0)
+  imageURL        String          @default("https://via.placeholder.com/150")
+
+  // Relations
+  repositories    Repository[]    // One-to-many: User can have multiple repositories
+  pullRequests    PullRequest[]   // One-to-many: User can have multiple pull requests
+  selectedRepos   SelectedRepo[]  // Relation with SelectedRepo
+}
+
+// PullRequest model
+model PullRequest {
+  id              Int             @id @default(autoincrement())
+  name            String          // Pull request name
+  link            String          // Pull request link
+  status          String          // Status (e.g., open, closed, merged)
+  isPinned        Boolean         @default(false) // Whether the PR is pinned
+  description     String?         // Optional PR description
+  createdAt       DateTime        @default(now()) // Timestamp for creation
+
+  // Relations
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int             // Foreign key to User
+  repository      Repository      @relation(fields: [repositoryId], references: [id])
+  repositoryId    Int             // Foreign key to Repository
+}
+
+// Repository model
+model Repository {
+  id              Int             @id @default(autoincrement())
+  name            String          // Repository name
+  link            String          // Repository link
+  isSelected      Boolean         @default(false) // Tracks if it's selected
+  isPinned        Boolean         @default(false) // Tracks if it's pinned
+  description     String?         // Optional repository description
+  createdAt       DateTime        @default(now()) // Timestamp for creation
+
+  // Relations
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int             // Foreign key to User
+  pullRequests    PullRequest[]   // One-to-many relation with PullRequest
+  selectedRepo    SelectedRepo?   // Optional relation with SelectedRepo
+}
+
+// SelectedRepo model
+model SelectedRepo {
+  id              Int             @id @default(autoincrement())
+  repository      Repository      @relation(fields: [repositoryId], references: [id])
+  repositoryId    Int             @unique  // Add @unique here
+  user            User            @relation(fields: [userId], references: [id])
+  userId          Int
+  createdAt       DateTime        @default(now())
 }

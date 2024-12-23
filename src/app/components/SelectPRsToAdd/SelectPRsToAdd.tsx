@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { RiArrowDropDownLine } from 'react-icons/ri';
 
 const SelectPRsToAdd = ({selectPRBoxIsOpen, setSelectPRBoxIsOpen, listOfSelectedPRs, repo_fullName, setRepo_fullName, setRepositoryLink, username}) => {
 
@@ -114,9 +115,9 @@ const SelectPRsToAdd = ({selectPRBoxIsOpen, setSelectPRBoxIsOpen, listOfSelected
               <button 
                 // onClick={handleDropDownofRepoSelection}
                 onClick={() => setIsdropdownRepo(!isdropdownRepo)}
-                className='bg-gray-200 px-2 flex justify-center items-center'
+                className='text-4xl'
               >
-                v
+                <RiArrowDropDownLine  />
               </button>
             </div>
 
@@ -138,9 +139,10 @@ const SelectPRsToAdd = ({selectPRBoxIsOpen, setSelectPRBoxIsOpen, listOfSelected
               <p>Select PR</p>
               <button 
                 onClick={() => setIsdropdownPR(!isdropdownPR)}
-                className='bg-gray-200 px-2 flex justify-center items-center'
+                className='text-4xl' 
+
               >
-                v
+                <RiArrowDropDownLine  />
               </button>
             </div>
 

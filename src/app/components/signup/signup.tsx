@@ -6,8 +6,10 @@ import { ChangeEventHandler, useState } from "react";
 
 
 export function Signup() {
-    const [username, setUsername] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
+    const [githubUsername, setGithubUsername] = useState("");
+    const [email, setEmail] = useState("")
     const router = useRouter();
 
     return <div className="h-screen flex justify-center flex-col">
@@ -21,20 +23,26 @@ export function Signup() {
                     </div>
                     <div className="pt-2">
                         <LabelledInput onChange={(e) => {
-                            setUsername(e.target.value);
-                        }} label="Username" placeholder="harkirat@gmail.com" />
+                            setName(e.target.value);
+                        }} label="Name" placeholder="John Yadav" />
+                        <LabelledInput onChange={(e) => {
+                            setEmail(e.target.value);
+                        }} label="Email" placeholder="John@gmail.com" />
                         <LabelledInput onChange={(e) => {
                             setPassword(e.target.value)
-                        }} label="Password" type={"password"} placeholder="123456" />
+                        }} label="Password" type={"password"} placeholder="password" />
+                        <LabelledInput onChange={(e) => {
+                            setGithubUsername(e.target.value)
+                        }} label="githubUsername" type={"githubUsername"} placeholder="githubUsername" />
                         <button 
                         onClick={async () => {
-                            if (!username || !password) {
+                            if (!name || !password || !githubUsername) {
                                 alert("Please fill in all fields");
                                 return;
                             }
                         
                             try {
-                                const response = await axios.post("http://localhost:3000/api/user", { username, password });
+                                const response = await axios.post("http://localhost:3000/api/user", { name, password, githubUsername, email });
                                 console.log("User signed up:", response.data);
                                 router.push("/");
                             } catch (error) {
