@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 
 const ShowcaseSelectedPR = ({listOfSelectedPRs, repositoryLink, repo_fullName}) => {
-    const[description, setDescription] = useState("")
     const[descriptionDropdown, setDescriptionDropdown] = useState(false)
 
     const handleAddDescription = () => {

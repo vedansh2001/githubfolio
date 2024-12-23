@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 //this function will fetch the user repositories as well as selected repos
-export async function GET(req: NextRequest){
+export async function GET(_: NextRequest){
     try {
         const user = await prisma.user.findUnique({
             where: {
@@ -67,7 +67,7 @@ export async function POST(req:NextRequest) {
         );
         }
     
-        const updatedRepository = await prisma.repository.update({
+        await prisma.repository.update({
           where: {
             id: id, // Find by the repo name
           },

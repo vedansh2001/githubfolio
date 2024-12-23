@@ -22,7 +22,7 @@ export async function PUT(req: NextRequest) {
               { status: 400 }
             );
         }
-        const deleteUser = await prisma.repository.update({
+        await prisma.repository.update({
             where: {
                 id: id, 
             },
@@ -48,7 +48,7 @@ export async function PUT(req: NextRequest) {
               { message: "An error occurred while processing your request." },
               { status: 500 }
             );
-            
+
     } finally {
             await prisma.$disconnect();
           }

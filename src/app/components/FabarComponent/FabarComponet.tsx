@@ -1,47 +1,53 @@
+import React, { useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import React, { useEffect, useRef } from "react";
 import { FaBars } from "react-icons/fa";
 import { MdLogin, MdLogout } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 
-const FabarComponent = ({ barisopen, setBarisopen, isLoggedIn }) => {
-  const boxRef = useRef(null); // Create a reference to the box
+interface FabarComponentProps {
+  barisopen: boolean;
+  setBarisopen: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoggedIn: boolean;
+}
+
+const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen, isLoggedIn }) => {
+  const boxRef = useRef<HTMLDivElement | null>(null);
 
   const handleOnClick = () => {
     setBarisopen(false);
   };
 
-  // Close the box when clicking outside
-  const handleOutsideClick = (e) => {
-    if (boxRef.current && !boxRef.current.contains(e.target)) {
-      setBarisopen(false);
-    }
-  };
+  const handleOutsideClick = useCallback(
+    (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) {
+        setBarisopen(false);
+      }
+    },
+    [setBarisopen]
+  );
 
   useEffect(() => {
     if (barisopen) {
-      document.addEventListener("mousedown", handleOutsideClick); // Attach event listener
+      document.addEventListener("mousedown", handleOutsideClick);
     } else {
-      document.removeEventListener("mousedown", handleOutsideClick); // Remove listener when box is closed
+      document.removeEventListener("mousedown", handleOutsideClick);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick); // Clean up on unmount
+      document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, [barisopen]);
+  }, [barisopen, handleOutsideClick]);
 
   return (
     <div>
       <div
-        ref={boxRef} // Attach the reference to the box
+        ref={boxRef}
         className={`fixed top-0 right-0 h-screen w-[300px] bg-gray-300 shadow shadow-gray-500 flex flex-col justify-between transform transition-transform duration-300 ${
           barisopen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div>
-          <div
-            className="flex justify-end w-[100%] pt-4 pr-6 text-4xl font-semibold mb-4 cursor-pointer"
-          >
+          <div className="flex justify-end w-[100%] pt-4 pr-6 text-4xl font-semibold mb-4 cursor-pointer">
             <RxCross2
               onClick={handleOnClick}
               className="bg-gray-200 p-1 flex justify-center items-center rounded-full"
@@ -71,11 +77,10 @@ const FabarComponent = ({ barisopen, setBarisopen, isLoggedIn }) => {
             </div>
           ) : (
             <div className="relative group">
-              
-              <Link href="../signup" >
-              <div>
-                <MdLogin className="text-5xl pl-3 cursor-pointer" />
-              </div>
+              <Link href="../signup">
+                <div>
+                  <MdLogin className="text-5xl pl-3 cursor-pointer" />
+                </div>
               </Link>
               <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
                 Login
