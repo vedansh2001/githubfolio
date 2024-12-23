@@ -1,46 +1,58 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-const SelectedRepositories = ({selectedRepos, setSelectedRepos, setAddedRepos, addedRepos}) => {
-  const [loadingRepoId, setLoadingRepoId] = useState(null);    
+// Define the type for a Repository
+interface Repository {
+  id: number;
+  name: string;
+}
 
-  const handleRemoveRepo = (id) => {
-    // Remove repo from selected and added lists
-    // setSelectedRepos(selectedRepos.filter((repo) => repo !== nameofrepo));
-    // setAddedRepos(addedRepos.filter((repo) => repo !== nameofrepo));
+interface SelectedRepositoriesProps {
+  selectedRepos: Repository[];
+  setSelectedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+  setAddedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+}
+
+const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({ selectedRepos, setSelectedRepos, setAddedRepos }) => {
+  const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);  // Track loading state for each repo
+
+  const handleRemoveRepo = (id: number) => {
     setLoadingRepoId(id);
 
-    const fetchdata = async (id) => {        
+    const fetchdata = async (id: number) => {        
       try {
         const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
-        const res = await fetch(url, {
-          method: 'PUT', // Specify the method
-      });
+        const res = await fetch(url, { method: 'PUT' });
+
+        if (!res.ok) {
+          throw new Error("Failed to remove repository");
+        }
+
         const data = await res.json();
         console.log(data.selectedRepos);
-        setSelectedRepos(data.selectedRepos)
-        setAddedRepos(data.selectedRepos)
+        setSelectedRepos(data.selectedRepos);
+        setAddedRepos(data.selectedRepos);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
-    fetchdata(id)
+
+    fetchdata(id);
   };
 
-
   return (
-      <div className="min-h-[500px] w-[40%] mb-[10%] bg-gray-300 border-2 p-1 border-black rounded-sm overflow-auto">
-        <h1 className="font-semibold py-3 text-2xl flex justify-center">
-          SELECTED REPOSITORIES
-        </h1>
+    <div className="min-h-[500px] w-[40%] mb-[10%] bg-gray-300 border-2 p-1 border-black rounded-sm overflow-auto">
+      <h1 className="font-semibold py-3 text-2xl flex justify-center">
+        SELECTED REPOSITORIES
+      </h1>
 
-        {selectedRepos.map((repo, index) => (
-          <div
-            className="bg-gray-400 px-2 py-1 flex justify-between mb-1 border-2 border-black rounded-sm"
-            key={index}
-          >
-            {repo.name}
+      {selectedRepos.map((repo) => (
+        <div
+          className="bg-gray-400 px-2 py-1 flex justify-between mb-1 border-2 border-black rounded-sm"
+          key={repo.id}
+        >
+          {repo.name}
 
-            <button
+          <button
             className={`bg-red-500 border-[1px] border-black rounded-sm px-2 py-[1px] flex items-center justify-center ${
               loadingRepoId === repo.id ? "bg-gray-500 cursor-not-allowed" : ""
             }`}
@@ -72,10 +84,10 @@ const SelectedRepositories = ({selectedRepos, setSelectedRepos, setAddedRepos, a
               "Delete"
             )}
           </button>
-          </div>
-        ))}
+        </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
-export default SelectedRepositories
+export default SelectedRepositories;

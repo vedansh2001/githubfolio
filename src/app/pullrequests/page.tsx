@@ -5,7 +5,7 @@ import PinnedSection from '../components/PinnedPRs/PinnedPRs';
 import ShowcaseSelectedPR from '../components/ShowcaseSelectedPR/ShowcaseSelectedPR';
 import SelectPRsToAdd from '../components/SelectPRsToAdd/SelectPRsToAdd';
 
-const pullrequest = () => {
+const Pullrequest = () => {
 
     const [selectPRBoxIsOpen, setSelectPRBoxIsOpen] = useState(false);
     const [listOfSelectedPRs, setListofSelectedPRs] = useState([])
@@ -48,4 +48,4 @@ const pullrequest = () => {
   )
 }
 
-export default pullrequest
+export default Pullrequest

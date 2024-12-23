@@ -3,22 +3,34 @@
 import React, { useEffect, useState } from "react";
 import SelectedRepositories from "../components/SelectedRepositories/SelectedRepositories";
 
-const Repositories = () => {
-  const [Repos, setRepos] = useState([]); // List of all repositories
-  const [selectedRepos, setSelectedRepos] = useState([]); // List of selected repositories
-  const [addedRepos, setAddedRepos] = useState([]); // Tracks which repos have been added
-  const [loadingRepoId, setLoadingRepoId] = useState(null); // Track loading state for each button
+interface Repository {
+  id: number;
+  name: string;
+}
+
+interface SelectedRepositoriesProps {
+  selectedRepos: Repository[];
+  setSelectedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+  setAddedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+  addedRepos: Repository[];
+}
+
+const Repositories: React.FC = () => {
+  const [Repos, setRepos] = useState<Repository[]>([]); // List of all repositories
+  const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]); // List of selected repositories
+  const [addedRepos, setAddedRepos] = useState<Repository[]>([]); // Tracks which repos have been added
+  const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null); // Track loading state for each button
 
   const username = "vedansh2001";
 
-  const handleSelectRepo = (id) => {
+  const handleSelectRepo = (id: number) => {
     setLoadingRepoId(id); // Start loading for the specific repository
 
-    const fetchdata = async (id) => {
+    const fetchdata = async (id: number) => {
       try {
         const url = `/api/repository?Id=${encodeURIComponent(id)}`;
         const res = await fetch(url, {
-          method: "POST", // Specify the method
+          method: "POST",
         });
 
         if (!res.ok) {
@@ -62,10 +74,10 @@ const Repositories = () => {
           SELECT REPOSITORIES
         </h1>
 
-        {Repos.map(({ id, name }, index) => (
+        {Repos.map(({ id, name }) => (
           <div
             className="bg-gray-400 px-2 py-1 flex justify-between mb-1 border-2 border-black rounded-sm"
-            key={index}
+            key={id}
           >
             {name}
 
@@ -111,7 +123,6 @@ const Repositories = () => {
         selectedRepos={selectedRepos}
         setSelectedRepos={setSelectedRepos}
         setAddedRepos={setAddedRepos}
-        addedRepos={addedRepos}
       />
     </div>
   );

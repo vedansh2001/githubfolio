@@ -4,17 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
+//this function will fetch the user repositories as well as selected repos
 export async function GET(req: NextRequest){
     try {
         const user = await prisma.user.findUnique({
             where: {
                 email: "vedanshm2001@gmail.com"
-            }
-        });
-
-        const userRepo = await prisma.repository.findMany({
-            where: {
-                userId: user.id
             }
         });
         if (!user) {
@@ -25,6 +20,12 @@ export async function GET(req: NextRequest){
               { status: 404 }
             );
         }
+
+        const userRepo = await prisma.repository.findMany({
+            where: {
+                userId: user.id
+            }
+        });
 
         const selectedRepos = await prisma.repository.findMany({
             where: {
@@ -49,11 +50,7 @@ export async function GET(req: NextRequest){
 
 export async function POST(req:NextRequest) {
     try {
-        const idString = req.nextUrl.searchParams.get('Id'); // Use searchParams to get query parameters
-
-        const id = parseInt(idString, 10);
-
-        
+        const idString = req.nextUrl.searchParams.get('Id'); 
         
         if (!idString) {
           return NextResponse.json(
@@ -61,6 +58,7 @@ export async function POST(req:NextRequest) {
             { status: 400 }
           );
         }
+        const id = parseInt(idString, 10);
 
         if (isNaN(id)) {
         return NextResponse.json(
