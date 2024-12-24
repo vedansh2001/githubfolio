@@ -27,12 +27,10 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
 
     const fetchdata = async (id: number) => {
       try {
-        //if we remove a repo from selected repo then it should by default be unpinned also 
+        //repo should be unpinned if it is being removed from selected repos.
         await fetch(`/api/ispinned?Id=${id}&action=unpin`, {
           method: "PUT",
         });
-
-
         const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
         const res = await fetch(url, { method: "PUT" });
 
@@ -82,6 +80,8 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
         )
       );
 
+      console.log(data.message);
+      console.log(`This is the data after ${action}:`, data.pinnedRepos);
     } catch (error) {
       console.error(`Error while trying to ${action}:`, error);
     } finally {
@@ -130,7 +130,6 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
                   pinLoadingRepoId === repo.id ? "cursor-not-allowed" : ""
                 }`}
                 onClick={() => togglePin(repo.id, true)}
-                disabled={pinLoadingRepoId === repo.id}
               />
             ) : (
               <RxDrawingPin
@@ -138,7 +137,6 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
                   pinLoadingRepoId === repo.id ? "cursor-not-allowed" : ""
                 }`}
                 onClick={() => togglePin(repo.id, false)}
-                disabled={pinLoadingRepoId === repo.id}
               />
             )}
 
