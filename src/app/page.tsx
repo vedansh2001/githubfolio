@@ -15,26 +15,56 @@ import { LuDot } from "react-icons/lu";
 
 export default function Home() {
 
-  const [userdata, setUserdata] = useState({})
+
+  type UserData = {
+    imageURL: string;
+    name: string;
+    bio: string;
+    location: string;
+    followers: number;
+    following: number;
+    publicRepos: number;
+    githubUsername?: string; // Optional if it might be missing
+  };
+  
+  const [userdata, setUserdata] = useState<UserData>({
+    imageURL: "",
+    name: "",
+    bio: "",
+    location: "",
+    followers: 0,
+    following: 0,
+    publicRepos: 0,
+  });
+  
   const [barisopen, setBarisopen] = useState(false)
   const [isLoggedIn, setIsloggedIn] = useState(false);
 
     
 
   useEffect(() => {
-        const fetchdata = async () => {        
-          try {
-            const res = await fetch("api/user");
-            const data = await res.json();
-            setUserdata(data.user)
-
-          } catch (error) {
-            console.log("Error: ", error);    
-          }
-        }
-        fetchdata()
-
-    },[])
+    const fetchdata = async () => {
+      try {
+        const res = await fetch("/api/user");
+        const data = await res.json();
+        setUserdata({
+          imageURL: data.user.imageURL,
+          name: data.user.name,
+          bio: data.user.bio,
+          location: data.user.location,
+          followers: data.user.followers,
+          following: data.user.following,
+          publicRepos: data.user.publicRepos,
+          githubUsername: data.user.githubUsername,
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    fetchdata();
+  }, []);
+  
 
    
 
@@ -51,35 +81,49 @@ export default function Home() {
 
 
 
-          <div className="flex gap-4 mb-5 border-dashed border-gray-700 border-2 p-4">
-                        <div className="flex items-center justify-center" >
-                          <Image src={userdata.imageURL} alt="GitHub Avatar" className="rounded-full" width={110} height={110} />
-                            
-                        </div>
-                        <div className="">
-                              <div className="flex justify-start items-center font-semibold text-2xl ml-1">
-                                {userdata.name}
-                              </div>
-
-                            <div className="flex justify-start items-center text-md ml-1" >
-                              {userdata.bio} 
-                            </div>
-                            <div className="flex justify-start items-center text-md" >
-                            <IoLocation className="mr-1" /> 
-                            {userdata.location}
-                            </div>
-                            <div className="flex items-center text-md" >
-                            <RiUserFollowFill className="mr-1" /> {userdata.followers} Followers<LuDot />{userdata.following}  Following
-                            </div>
-                            <div className="flex justify-start items-center text-md" >
-                              <RiGitRepositoryFill className="mr-1" />
-                              Public repos: {userdata.publicRepos}
-                            </div>
-                        </div>
-          </div>
+        <div className="flex gap-4 mb-5 border-dashed border-gray-700 border-2 p-4">
+    <div className="flex items-center justify-center">
+      {userdata.imageURL ? (
+        <Image
+          src={userdata.imageURL}
+          alt="GitHub Avatar"
+          className="rounded-full"
+          width={110}
+          height={110}
+          priority
+        />
+      ) : (
+        <div
+          className="rounded-full bg-gray-400"
+          style={{ width: 110, height: 110 }}
+        />
+      )}
+    </div>
 
 
-
+    <div>
+      <div className="flex justify-start items-center font-semibold text-2xl ml-1">
+        {userdata.name || "Anonymous"}
+      </div>
+      <div className="flex justify-start items-center text-md ml-1">
+        {userdata.bio || "No bio available"}
+      </div>
+      <div className="flex justify-start items-center text-md">
+        <IoLocation className="mr-1" />
+        {userdata.location || "Location not specified"}
+      </div>
+      <div className="flex items-center text-md">
+        <RiUserFollowFill className="mr-1" />
+        {userdata.followers} Followers
+        <LuDot />
+        {userdata.following} Following
+      </div>
+      <div className="flex justify-start items-center text-md">
+        <RiGitRepositoryFill className="mr-1" />
+        Public repos: {userdata.publicRepos}
+      </div>
+    </div>
+</div>
 
 
 
@@ -94,6 +138,7 @@ export default function Home() {
                 className="mb-1"
                 alt="Stats Graph"
                 unoptimized
+                priority
               />
             )}
 
@@ -105,6 +150,7 @@ export default function Home() {
                 width={500}
                 alt="Languages Graph"
                 unoptimized
+                priority
               />
             )}
           </div>
