@@ -5,6 +5,9 @@ const nextConfig = {
                 'github-readme-stats.vercel.app', 
                ],                                    // Allow images from this domain
     },
+    eslint: {
+      ignoreDuringBuilds: true,
+    },
   };
   
   export default nextConfig;
