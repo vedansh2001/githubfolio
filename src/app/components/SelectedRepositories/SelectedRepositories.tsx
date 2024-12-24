@@ -82,8 +82,6 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
         )
       );
 
-      console.log(data.message);
-      console.log(`This is the data after ${action}:`, data.pinnedRepos);
     } catch (error) {
       console.error(`Error while trying to ${action}:`, error);
     } finally {
