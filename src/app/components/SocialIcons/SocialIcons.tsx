@@ -19,7 +19,7 @@ const SocialIcons = () => {
   
 
   return (
-    <div className="bg-gray-300 border-dashed border-gray-700 border-2 p-3 text-xl mt-6 w-[80%] ml-[10%]" >
+    <div className="bg-gray-300 border-dashed border-gray-700 border-2 p-2 text-xl mt-5 w-[80%] ml-[10%]" >
               <p className="font-bold text-gray-800 text-2xl flex items-center justify-center mb-4" >Share on socials</p>           
               <div className="flex justify-between px-[20%] pt-2" >
               <button

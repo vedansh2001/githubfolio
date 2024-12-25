@@ -168,7 +168,7 @@ export default function Home() {
 
                  <PinnedPRs/>
 
-                  <div className='w-[80%] ml-[10%] flex -mt-5 justify-end'>
+                  <div className='w-[80%] ml-[10%] flex -mt-2 justify-end'>
                     <Link 
                       className='bg-green-500 border-2 border-black rounded-sm px-3 py-1'
                       href="/pullrequests"
@@ -180,7 +180,7 @@ export default function Home() {
 
                  <PinnedRepos />
 
-                  <div className='w-[80%] ml-[10%] flex justify-end -mt-5'>
+                  <div className='w-[80%] ml-[10%] flex justify-end -mt-2'>
                     <Link 
                       className='bg-green-500 border-2 border-black rounded-sm px-3 py-1' 
                       href="/repositories"

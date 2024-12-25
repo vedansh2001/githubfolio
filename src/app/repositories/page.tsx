@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import SelectedRepositories from "../components/SelectedRepositories/SelectedRepositories";
+import PinnedRepos from "../components/PinnedRepos/PinnedRepos";
 
 interface Repository {
   id: number;
@@ -18,10 +19,10 @@ interface SelectedRepositoriesProps {
 }
 
 const Repositories: React.FC = () => {
-  const [Repos, setRepos] = useState<Repository[]>([]); // List of all repositories
-  const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]); // List of selected repositories
-  const [addedRepos, setAddedRepos] = useState<Repository[]>([]); // Tracks which repos have been added
-  const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null); // Track loading state for each button
+  const [Repos, setRepos] = useState<Repository[]>([]); 
+  const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]); 
+  const [addedRepos, setAddedRepos] = useState<Repository[]>([]); 
+  const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null); 
 
   const username = "vedansh2001";
 
@@ -40,7 +41,7 @@ const Repositories: React.FC = () => {
         }
 
         const data = await res.json();
-        console.log(data.selectedRepos);
+        console.log(data);
         setSelectedRepos(data.selectedRepos);
         setAddedRepos(data.selectedRepos);
       } catch (error) {
@@ -64,6 +65,7 @@ const Repositories: React.FC = () => {
         }));
         setRepos(RepoListExtracted);
         setSelectedRepos(data.selectedRepos);
+        
       } catch (error) {
         console.log("error: ", error);
       }
@@ -131,6 +133,7 @@ const Repositories: React.FC = () => {
         setAddedRepos={setAddedRepos}
       />
     </div>
+   
   );
 };
 
