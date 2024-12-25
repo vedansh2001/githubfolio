@@ -11,9 +11,11 @@ export async function GET(req: NextRequest) {
                 isPinned: true,
             },
           })
-          return NextResponse.json({
-            isPinnedToShowInPinnedSection: isPinnedToShowInPinnedSection,
-          });
+          return NextResponse.json(
+            { isPinnedToShowInPinnedSection },
+            { headers: { "Cache-Control": "no-store" } }
+          );
+  
     } catch (error) {
         console.error("Error in PUT handler:", error);
         return NextResponse.json(

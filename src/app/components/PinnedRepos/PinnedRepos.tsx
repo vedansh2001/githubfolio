@@ -15,7 +15,7 @@ const PinnedRepos = () => {
   useEffect(() => {
     const fetchdata = async () => {
       try {
-        const res = await fetch(`api/fetchPinnedRepos?timestamp=${Date.now()}`, {
+        const res = await fetch("api/fetchPinnedRepos", {
           method: "GET",
         });
         const data = await res.json();
