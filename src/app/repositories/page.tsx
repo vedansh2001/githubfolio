@@ -6,7 +6,9 @@ import SelectedRepositories from "../components/SelectedRepositories/SelectedRep
 interface Repository {
   id: number;
   name: string;
+  isPinned?: boolean; 
 }
+
 
 interface SelectedRepositoriesProps {
   selectedRepos: Repository[];
@@ -56,7 +58,10 @@ const Repositories: React.FC = () => {
       try {
         const res = await fetch("api/repository");
         const data = await res.json();
-        const RepoListExtracted = data.userRepo;
+        const RepoListExtracted = data.userRepo.map((repo: any) => ({
+          ...repo,
+          isPinned: repo.isPinned || false, // Default value if `isPinned` is missing
+        }));
         setRepos(RepoListExtracted);
         setSelectedRepos(data.selectedRepos);
       } catch (error) {
@@ -65,6 +70,7 @@ const Repositories: React.FC = () => {
     };
     fetchdata();
   }, [username]);
+  
 
   return (
     <div className="h-screen bg-gray-200 pt-[5%] px-[10%] flex justify-between">

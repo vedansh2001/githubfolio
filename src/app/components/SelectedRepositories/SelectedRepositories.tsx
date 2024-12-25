@@ -5,7 +5,7 @@ import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
 interface Repository {
   id: number;
   name: string;
-  isPinned: Boolean;
+  isPinned?: boolean;
 }
 
 interface SelectedRepositoriesProps {
@@ -27,10 +27,11 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
 
     const fetchdata = async (id: number) => {
       try {
-        //repo should be unpinned if it is being removed from selected repos.
+        //repo should be unpinned also if it is being removed from selected repos.
         await fetch(`/api/ispinned?Id=${id}&action=unpin`, {
           method: "PUT",
         });
+        //remove repo from selected repos.
         const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
         const res = await fetch(url, { method: "PUT" });
 
