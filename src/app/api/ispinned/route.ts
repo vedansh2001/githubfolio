@@ -40,7 +40,7 @@ export async function PUT(req: NextRequest) {
     const isPinned = action === "pin";
     console.log(`Updating repository ID ${id} to isPinned=${isPinned}`);
 
-    const updatedRepo = await prisma.repository.update({
+    await prisma.repository.update({
       where: { id },
       data: { isPinned },
     });
@@ -67,24 +67,3 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
-    try {
-        
-        const isPinnedToShowInPinnedSection = await prisma.repository.findMany({
-            where: {
-                isPinned: true,
-            },
-          })
-          return NextResponse.json({
-            isPinnedToShowInPinnedSection: isPinnedToShowInPinnedSection,
-          });
-    } catch (error) {
-        console.error("Error in PUT handler:", error);
-        return NextResponse.json(
-          { message: "An error occurred while processing your request." },
-          { status: 500 }
-        );
-      } finally {
-        await prisma.$disconnect();
-      }
-    }

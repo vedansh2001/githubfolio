@@ -15,7 +15,9 @@ const PinnedRepos = () => {
   useEffect(() => {
     const fetchdata = async () => {
       try {
-        const res = await fetch("api/ispinned");
+        const res = await fetch("api/fetchPinnedRepos", {
+          method: "GET",
+        });
         const data = await res.json();
         setFetchedPinnedRepos(data.isPinnedToShowInPinnedSection);
       } catch (error) {
