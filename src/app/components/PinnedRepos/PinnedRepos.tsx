@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { PiPushPinSlashFill } from "react-icons/pi";
 
@@ -12,7 +12,6 @@ interface Repository {
 const PinnedRepos = () => {
   const [fetchedPinnedRepos, setFetchedPinnedRepos] = useState<Repository[]>([]);
 
-  useEffect(() => {
     const fetchdata = async () => {
       try {
         const res = await fetch("api/fetchPinnedRepos", {
@@ -25,7 +24,6 @@ const PinnedRepos = () => {
       }
     };
     fetchdata();
-  }, []);
 
   return (
     <div className="h-[38%] bg-gray-300">
