@@ -9,8 +9,13 @@ export async function GET(_: NextRequest) {
                 isPinned: true,
             },
         })
-        return NextResponse.json({
-            isPinnedToShowInPinnedSection: isPinnedToShowInPinnedSection,
+        return new NextResponse(JSON.stringify({
+            isPinnedToShowInPinnedSection
+        }), {
+            headers: {
+                'Cache-Control': 'no-store, max-age=0',
+                'Content-Type': 'application/json',
+            },
         });
     } catch (error) {
         console.error("Error in PUT handler:", error);

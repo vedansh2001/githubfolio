@@ -15,8 +15,9 @@ const PinnedRepos = () => {
   useEffect(() => {
     const fetchdata = async () => {
       try {
-        const res = await fetch("api/fetchPinnedRepos", {
+        const res = await fetch(`api/fetchPinnedRepos?t=${Date.now()}`, {
           method: "GET",
+          cache: 'no-store'
         });
         const data = await res.json();
         console.log("Fetched Pinned Repositories in Vercel:", data.isPinnedToShowInPinnedSection);
@@ -39,7 +40,7 @@ const PinnedRepos = () => {
           fetchedPinnedRepos?.map((repo) => (
             <div
               key={repo.id}
-              className="border-2 border-gray-700 p-2 flex items-center justify-between cursor-pointer"
+              className="border-2 border-gray-700 p-2 flex items-center justify-between cursor-pointer truncate"
             >
               <div className="bg-gray-300 truncate max-w-[90%]">
                 {repo.name}
