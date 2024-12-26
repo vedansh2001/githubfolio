@@ -19,6 +19,8 @@ const PinnedRepos = () => {
           method: "GET",
         });
         const data = await res.json();
+        console.log("Fetched Pinned Repositories in Vercel:", data.isPinnedToShowInPinnedSection);
+
         setFetchedPinnedRepos(data.isPinnedToShowInPinnedSection);
       } catch (error) {
         console.log("error: ", error);

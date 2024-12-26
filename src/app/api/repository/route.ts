@@ -1,8 +1,7 @@
 
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
 
-const prisma = new PrismaClient();
 
 //this function will fetch the user repositories as well as selected repos
 export async function GET(_: NextRequest){

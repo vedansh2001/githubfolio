@@ -1,21 +1,17 @@
-import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
 
-const prisma = new PrismaClient();
-
-export async function GET(req: NextRequest) {
+export async function GET(_: NextRequest) {
     try {
         
         const isPinnedToShowInPinnedSection = await prisma.repository.findMany({
             where: {
                 isPinned: true,
             },
-          })
-          return NextResponse.json(
-            { isPinnedToShowInPinnedSection },
-            { headers: { "Cache-Control": "no-store" } }
-          );
-  
+        })
+        return NextResponse.json({
+            isPinnedToShowInPinnedSection: isPinnedToShowInPinnedSection,
+        });
     } catch (error) {
         console.error("Error in PUT handler:", error);
         return NextResponse.json(
