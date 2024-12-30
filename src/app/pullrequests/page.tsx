@@ -4,7 +4,8 @@ import React, { useState, useEffect, Suspense } from "react";
 import PinnedSection from "../components/PinnedPRs/PinnedPRs";
 import ShowcaseSelectedPR from "../components/ShowcaseSelectedPR/ShowcaseSelectedPR";
 import SelectPRsToAdd from "../components/SelectPRsToAdd/SelectPRsToAdd";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 
 // Define the PR type with the correct structure
 type PR = {
@@ -30,19 +31,25 @@ const Pullrequest = () => {
   const [userId, setUserId] = useState<number>(0);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
-  const searchParams = useSearchParams();
-  const data = searchParams.get("data");
+  // const searchParams = useSearchParams();
+  // const data = searchParams.get("data");
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const data = params.get('data');
     setUserId(Number(data));
-  }, [data]);
+  }, []);
+
+  // useEffect(() => {
+  //   setUserId(Number(data));
+  // }, [data]);
 
   const handleOpenAddPRBox = () => {
     setSelectPRBoxIsOpen(!selectPRBoxIsOpen);
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    // <Suspense fallback={<div>Loading...</div>}>
       <div className="h-screen bg-gray-200">
         {/* pinned section present on the top */}
         <PinnedSection 
@@ -84,7 +91,7 @@ const Pullrequest = () => {
           />
         )}
       </div>
-    </Suspense>
+    // </Suspense>
   );
 };
 

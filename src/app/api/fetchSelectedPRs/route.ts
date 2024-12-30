@@ -1,11 +1,18 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
     // Parse query parameters from req.url
-    const url = new URL(req.url);
-    const id = url.searchParams.get("userId");
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('userId');
+
+    // const params = new URLSearchParams(window.location.search);
+    // const id = params.get('data');
+    // console.log("id is here ",id);
+    
+
 
     if (!id) {
       return NextResponse.json(

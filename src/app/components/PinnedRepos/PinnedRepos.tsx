@@ -20,7 +20,6 @@ const PinnedRepos = () => {
           cache: 'no-store'
         });
         const data = await res.json();
-        console.log("Fetched Pinned Repositories in Vercel:", data.isPinnedToShowInPinnedSection);
 
         setFetchedPinnedRepos(data.isPinnedToShowInPinnedSection);
       } catch (error) {
