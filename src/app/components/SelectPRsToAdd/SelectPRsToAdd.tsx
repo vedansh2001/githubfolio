@@ -1,185 +1,227 @@
-import React, { useEffect, useState } from 'react';
-import { RiArrowDropDownLine } from 'react-icons/ri';
+import React, { useEffect, useState } from "react";
+import { RiArrowDropDownLine } from "react-icons/ri";
 
-type PR = { title: string; number: number; html_url: string; state: string };
+type PR = {
+  title: string;
+  number: number;
+  html_url: string;
+  state: string;
+  full_name: string;
+  added?: boolean; // Add the optional 'added' property
+};
+type PR2 = {
+  createdAt: string;
+  description: string | null;
+  full_name: string;
+  id: number;
+  isPinned: boolean;
+  link: string;
+  name: string;
+  number: number;
+  repositoryId: number;
+  state: string;
+  userId: number;
+};
+interface Repository {
+  id: number;
+  name: string;
+}
 
 const SelectPRsToAdd = ({
   selectPRBoxIsOpen,
   setSelectPRBoxIsOpen,
-  listOfSelectedPRs,
   repo_fullName,
   setRepo_fullName,
   setRepositoryLink,
   username,
+  userId,
+  setListofSelectedPRs
 }: {
   selectPRBoxIsOpen: boolean;
   setSelectPRBoxIsOpen: (value: boolean) => void;
-  listOfSelectedPRs: PR[];
   repo_fullName: string;
   setRepo_fullName: (value: string) => void;
   setRepositoryLink: (value: string) => void;
   username: string;
+  userId: number;  
+  setListofSelectedPRs: React.Dispatch<React.SetStateAction<PR2[]>>;
 }) => {
-  const [isdropdownRepo, setIsdropdownRepo] = useState(false);
-  const [isdropdownPR, setIsdropdownPR] = useState(false);
-  const [listOfUserRepos, setListOfUserRepos] = useState<string[]>([]);
-  const [listOfPRsOfParticularRepo, setlistOfPRsOfParticularRepo] = useState<PR[]>([]);
+  const [dropdowns, setDropdowns] = useState({
+    repo: false,
+    pr: false,
+  });
+  const [repos, setRepos] = useState<Repository[]>([]);
+  const [prs, setPRs] = useState<PR[]>([]);
   const [selectedRepo, setSelectedRepo] = useState("Select repository...");
-  const [selectedPR, setSelectedPR] = useState<PR | null>(null); // Changed this to type PR | null to ensure a valid object
+  const [repoId, setRepoId] = useState<number>(0);
+  const [loadingPR, setLoadingPR] = useState<number | null>(null); // Tracks the loading state for the specific PR
 
-  const handleCrossToCloseAddPRBox = () => {
-    setSelectPRBoxIsOpen(!selectPRBoxIsOpen);
+  const toggleDropdown = (type: "repo" | "pr") => {
+    setDropdowns((prev) => ({ ...prev, [type]: !prev[type] }));
   };
 
-  const handleToSelectRepo = (name: string) => {
+  const closePRBox = () => setSelectPRBoxIsOpen(false);
+
+  const handleSelectRepo = (name: string, id: number) => {
     setSelectedRepo(name);
-    setIsdropdownRepo(!isdropdownRepo);
-    fetchdataforPR(name);
+    setRepoId(id);
+    toggleDropdown("repo");
+    fetchRepoDetails(name);
   };
 
-  const handleToSelectPR = (item: PR) => {
-    setSelectedPR(item);  // Now setSelectedPR can accept the 'PR' type object correctly
-    setIsdropdownPR(!isdropdownPR);
-  };
+  const handleAddPR = async (item: PR) => {
+    setLoadingPR(item.number); // Start loading for the specific PR
 
-  const handleAddPR = () => {
-    if (selectedPR) {  // Added a check to ensure selectedPR is not null before pushing
-      listOfSelectedPRs.push(selectedPR);
-      setSelectPRBoxIsOpen(!selectPRBoxIsOpen);
-    }
-  };
-
-  useEffect(() => {
-    const fetchdata = async () => {
-      try {
-        const res = await fetch(`https://api.github.com/users/${username}/repos`);
-        const data = await res.json();
-        const RepoListExtracted = data.map((item: { name: string }) => item.name);
-        setListOfUserRepos(RepoListExtracted);
-      } catch (error) {
-        console.log("error: ", error);
-      }
-    };
-    fetchdata();
-  }, [username]);
-
-  const fetchdataforPR = async (name: string) => {
     try {
-      const fetchOwnerName = await fetch(`https://api.github.com/repos/${username}/${name}`);
-      const ownerdata = await fetchOwnerName.json();
-
-      if (ownerdata.fork) {
-        setRepo_fullName(ownerdata.parent?.full_name || "");
-        setRepositoryLink(ownerdata.parent?.clone_url || "");
-      } else {
-        setRepo_fullName(ownerdata.full_name || "");
-        setRepositoryLink(ownerdata.clone_url || "");
-      }
-    } catch (error) {
-      console.log("error: ", error);
-    }
-  };
-
-  useEffect(() => {
-    if (repo_fullName) {
-      fetchdataforPR2(repo_fullName);
-    }
-  }, [repo_fullName]);
-
-  const fetchdataforPR2 = async (repo_fullName: string) => {
-    try {
-      const fetchPRdata = await fetch(
-        `https://api.github.com/search/issues?q=type:pr+author:${username}+repo:${repo_fullName}`
-      );
-      const PRdata = await fetchPRdata.json();
-
-      const PRlist = PRdata.items.map((item: any) => ({
+      const payload = {
         title: item.title,
         number: item.number,
         html_url: item.html_url,
         state: item.state,
-      }));
+        full_name: repo_fullName,
+        userId,
+        repositoryId: repoId,
+      };
 
-      setlistOfPRsOfParticularRepo(PRlist);
-      console.log(PRlist);
+      const res = await fetch("/api/selectPRofRepo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+      const data = await res.json();
+
+      setListofSelectedPRs(data.data)
+
     } catch (error) {
-      console.log("error: ", error);
+      console.error("Error adding PR:", error);
+    } finally {
+      setLoadingPR(null); // Stop loading
     }
   };
+
+  useEffect(() => {
+    const fetchRepos = async () => {
+      try {
+        const res = await fetch("/api/repository");
+        const data = await res.json();
+        setRepos(data.userRepo || []);
+      } catch (error) {
+        console.error("Error fetching repositories:", error);
+      }
+    };
+    fetchRepos();
+  }, []);
+
+  const fetchRepoDetails = async (name: string) => {
+    try {
+      const res = await fetch(`https://api.github.com/repos/${username}/${name}`);
+      const data = await res.json();
+
+      if (data.fork) {
+        setRepo_fullName(data.parent?.full_name || "");
+        setRepositoryLink(data.parent?.clone_url || "");
+      } else {
+        setRepo_fullName(data.full_name || "");
+        setRepositoryLink(data.clone_url || "");
+      }
+    } catch (error) {
+      console.error("Error fetching repo details:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (!repo_fullName) return;
+
+    const fetchPRs = async () => {
+      try {
+        const res = await fetch(
+          `https://api.github.com/search/issues?q=type:pr+author:${username}+repo:${repo_fullName}`
+        );
+        const data = await res.json();
+
+        setPRs(data.items.map((item: any) => ({
+          title: item.title,
+          number: item.number,
+          html_url: item.html_url,
+          state: item.state,
+          added: false, // Track if this PR is added
+        })));
+      } catch (error) {
+        console.error("Error fetching PRs:", error);
+      }
+    };
+
+    fetchPRs();
+  }, [repo_fullName]);
 
   return (
     <div>
       {selectPRBoxIsOpen && (
-        <div className="absolute top-[20%] right-[25%] w-[50%] h-[50%] bg-[#FFFFFF] p-5 border-2 border-black rounded-sm">
+        <div className="absolute top-[20%] right-[25%] w-[50%] h-[50%] bg-white p-5 border-2 border-black rounded-sm">
           <div className="flex justify-end">
             <button
-              className="px-3 py-1 flex justify-center items-center bg-gray-200"
-              onClick={handleCrossToCloseAddPRBox}
+              className="px-3 py-1 bg-gray-200 text-black rounded hover:bg-gray-300"
+              onClick={closePRBox}
             >
               X
             </button>
           </div>
-
           <div>
-            <p className="ml-[7.5%] mb-2">Add PRs</p>
+            <p className="ml-[7.5%] mb-2 text-lg font-semibold">Add PRs</p>
             <div className="w-[85%] ml-[7.5%] h-[60px] border-2 border-black text-gray-600 flex items-center justify-between px-4">
               <p>{selectedRepo}</p>
-              <button
-                onClick={() => setIsdropdownRepo(!isdropdownRepo)}
-                className="text-4xl"
-              >
+              <button onClick={() => toggleDropdown("repo")} className="text-4xl">
                 <RiArrowDropDownLine />
               </button>
             </div>
-
-            {isdropdownRepo && (
-              <div className="w-[85%] ml-[7.5%] h-40 max-h-40 overflow-y-auto">
-                {listOfUserRepos.map((name, index) => (
+            {dropdowns.repo && (
+              <div className="w-[85%] ml-[7.5%] max-h-40 overflow-y-auto border border-gray-300 rounded-md bg-gray-50">
+                {repos.map((repo) => (
                   <div
-                    className="h-[40px] border-2 border-black text-gray-500 flex items-center justify-between px-4 -mt-[1px] hover:bg-gray-200"
-                    key={index}
-                    onClick={() => handleToSelectRepo(name)}
+                    className="h-[40px] border-b border-gray-300 text-gray-500 flex items-center justify-between px-4 hover:bg-gray-200 cursor-pointer"
+                    key={repo.id}
+                    onClick={() => handleSelectRepo(repo.name, repo.id)}
                   >
-                    {name}
+                    {repo.name}
                   </div>
                 ))}
               </div>
             )}
           </div>
-
           <div>
             <div className="w-[85%] ml-[7.5%] mt-8 h-[60px] border-2 border-black text-gray-600 flex items-center justify-between px-4">
               <p>Select PR</p>
-              <button
-                onClick={() => setIsdropdownPR(!isdropdownPR)}
-                className="text-4xl"
-              >
+              <button onClick={() => toggleDropdown("pr")} className="text-4xl">
                 <RiArrowDropDownLine />
               </button>
             </div>
-
-            {isdropdownPR && (
-              <div className="w-[85%] ml-[7.5%] max-h-40 overflow-y-auto">
-                {listOfPRsOfParticularRepo.map((item, index) => (
+            {dropdowns.pr && (
+              <div className="w-[85%] ml-[7.5%] max-h-40 overflow-y-auto border border-gray-300 rounded-md bg-gray-50">
+                {prs.map((item) => (
                   <div
-                    className="h-[40px] border-2 border-black text-gray-500 flex items-center justify-between px-4 -mt-1 hover:bg-gray-200"
-                    key={index}
-                    onClick={() => handleToSelectPR(item)}
+                    className="h-[40px] border-b border-gray-300 text-gray-500 flex items-center justify-between px-4 hover:bg-gray-200 cursor-pointer"
+                    key={item.number}
                   >
                     {item.title}
+                    <button
+                      className={`px-4 py-1 border-2 rounded-sm ${
+                        item.added
+                          ? "bg-blue-500 text-white cursor-not-allowed"
+                          : "bg-green-500 text-white hover:bg-green-600"
+                      }`}
+                      onClick={() => handleAddPR(item)}
+                      disabled={loadingPR === item.number || item.added}
+                    >
+                      {loadingPR === item.number ? "Adding..." : item.added ? "Added" : "Add"}
+                    </button>
                   </div>
                 ))}
               </div>
             )}
-          </div>
-
-          <div className="flex justify-center pt-6">
-            <button
-              className="bg-green-500 border-2 border-black rounded-sm px-4 py-1"
-              onClick={handleAddPR}
-            >
-              Add
-            </button>
           </div>
         </div>
       )}

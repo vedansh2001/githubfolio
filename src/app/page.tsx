@@ -26,6 +26,19 @@ export default function Home() {
     publicRepos: number;
     githubUsername?: string; // Optional if it might be missing
   };
+  type PR = {
+    createdAt: string; // ISO Date format
+    description: string | null;
+    full_name: string;
+    id: number;
+    isPinned: boolean;
+    link: string;
+    name: string;
+    number: number;
+    repositoryId: number;
+    state: string;
+    userId: number;
+  };
   
   const [userdata, setUserdata] = useState<UserData>({
     imageURL: "",
@@ -39,6 +52,8 @@ export default function Home() {
   
   const [barisopen, setBarisopen] = useState(false)
   const [isLoggedIn, setIsloggedIn] = useState(false);
+  const [userId, setUserId] = useState<number>(0);
+  const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
     
 
@@ -47,6 +62,7 @@ export default function Home() {
       try {
         const res = await fetch("/api/user");
         const data = await res.json();
+        setUserId(data.user.id)
         setUserdata({
           imageURL: data.user.imageURL,
           name: data.user.name,
@@ -63,6 +79,17 @@ export default function Home() {
     };
   
     fetchdata();
+
+    const fetchPinnedPRs = async () => {
+      try {
+        const res = await fetch('api/fetchPinnedPRs');
+        const data = await res.json();
+        setIsPinnedToShowInPinnedSection(data.isPinnedToShowInPinnedSection);
+      } catch (error) {
+        console.log('Failed to fetch Pinned PRs: ', error);
+      }
+    };
+    fetchPinnedPRs();
   }, []);
   
 
@@ -166,12 +193,15 @@ export default function Home() {
 
               <div className='h-[90%] bg-gray-300 w-[600px] pt-5' >
 
-                 <PinnedPRs/>
+                 <PinnedPRs 
+                 setIsPinnedToShowInPinnedSection={setIsPinnedToShowInPinnedSection}
+                 isPinnedToShowInPinnedSection={isPinnedToShowInPinnedSection}
+                 />
 
                   <div className='w-[80%] ml-[10%] flex -mt-2 justify-end'>
                     <Link 
                       className='bg-green-500 border-2 border-black rounded-sm px-3 py-1'
-                      href="/pullrequests"
+                      href={{ pathname: "/pullrequests", query: { data: userId } }}
                     >
                       More
                     </Link>
