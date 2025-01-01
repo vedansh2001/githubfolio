@@ -49,7 +49,7 @@ export function Login() {
                                     setLoading(true);
 
                                     try {
-                                        const response = await fetch("http://localhost:3000/api/userlogin", {
+                                        const response = await fetch("api/userlogin", {
                                             method: "POST",
                                             headers: {
                                               "Content-Type": "application/json",
