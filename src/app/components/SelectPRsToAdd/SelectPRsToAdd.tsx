@@ -143,7 +143,7 @@ const SelectPRsToAdd = ({
         );
         const data = await res.json();
 
-        setPRs(data.items.map((item: any) => ({
+        setPRs(data.items.map((item: PR) => ({
           title: item.title,
           number: item.number,
           html_url: item.html_url,

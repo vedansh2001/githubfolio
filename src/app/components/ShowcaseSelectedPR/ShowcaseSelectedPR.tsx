@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
-import { FaSpinner } from "react-icons/fa"; // Spinner icon for loading
+import { FaExternalLinkAlt, FaSpinner } from "react-icons/fa"; // Spinner icon for loading
+import { RiArrowDropDownLine } from "react-icons/ri";
 
-// Updated PR type to match the data structure you provided
 type PR = {
   createdAt: string; // ISO Date format
   description: string | null;
@@ -33,16 +33,10 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   repo_fullName,
   userId,
   setIsPinnedToShowInPinnedSection,
-  
 }) => {
-  const [descriptionDropdown, setDescriptionDropdown] = useState(false);
   const [loadingPR, setLoadingPR] = useState<number | null>(null); // PR ID being pinned/unpinned
+  const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null); // Tracks which PR's description is open
 
-  const handleAddDescription = () => {
-    setDescriptionDropdown(!descriptionDropdown);
-  };
-
-  // Fetching PRs when userId changes
   useEffect(() => {
     if (userId !== 0) {
       const fetchSelectedPRs = async () => {
@@ -57,51 +51,45 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
       };
       fetchSelectedPRs();
     }
-  }, [userId, setListofSelectedPRs]); // Dependency array for useEffect
-  
+  }, [userId, setListofSelectedPRs]);
 
   const handlePinUnpin = async (id: number, shouldPin: boolean) => {
     setLoadingPR(id); // Show spinner for the clicked PR
     const action = shouldPin ? "pin" : "unpin";
-  
+
     try {
-      
       const response = await fetch(`/api/PinUnpinPRs?Id=${id}&action=${action}`, {
         method: "PUT",
       });
-      
-  
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`Failed to ${action}:`, errorText);
         throw new Error(errorText);
       }
       const data = await response.json();
-      setIsPinnedToShowInPinnedSection(data.pinnedPRs)
-  
-      // Update the local state immediately
+      setIsPinnedToShowInPinnedSection(data.pinnedPRs);
+
       setListofSelectedPRs((prevPRs) =>
-        prevPRs.map((pr) =>
-          pr.id === id ? { ...pr, isPinned: shouldPin } : pr
-        )
+        prevPRs.map((pr) => (pr.id === id ? { ...pr, isPinned: shouldPin } : pr))
       );
-  
     } catch (error) {
       console.error(`Error during ${action} operation:`, error);
     } finally {
       setLoadingPR(null);
-
     }
   };
-  
+
+  const toggleDescription = (id: number) => {
+    setOpenDescriptionId((prevId) => (prevId === id ? null : id));
+  };
 
   return (
     <div>
-      {/* Loop through listOfSelectedPRs to render each PR */}
       {Array.isArray(listOfSelectedPRs) &&
         listOfSelectedPRs.map((item) => (
           <div
-            className="w-[70%] h-[60px] ml-[15%] border-2 mb-4 border-black rounded-sm flex justify-between px-4"
+            className="w-[70%] h-[60px] ml-[15%] border-2 mb-4 border-black rounded-sm flex justify-between items-center px-4 bg-gray-300"
             key={item.id}
           >
             <div>
@@ -110,13 +98,10 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
               </p>
               <p>
                 {item.name} {/* Name of PR */}
-                <a className="text-sky-600 ml-2" href={item.link}>
-                  Link
-                </a>
               </p>
             </div>
             <div>
-              <div className="flex gap-4 items-center">
+              <div className="flex gap-5 items-center">
                 <div>Status: {item.state}</div>
                 {loadingPR === item.id ? (
                   <FaSpinner className="animate-spin text-gray-500" />
@@ -131,24 +116,27 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
                     onClick={() => handlePinUnpin(item.id, true)}
                   />
                 )}
+                
+                <a className="text-sky-600 ml-2" href={item.link}>
+                  <FaExternalLinkAlt/>
+                </a>
+              </div>
+              <div className="flex justify-end -mr-2">
+                <div
+                  className=" bg-[#C4C4C4] rounded-full flex justify-end"
+                  onClick={() => toggleDescription(item.id)}
+                >
+                  <RiArrowDropDownLine className="text-3xl" />
+                </div>
+            {openDescriptionId === item.id && (
+              <div className="h-[150px] w-[70%] -mx-[10px] p-4 absolute bg-gray-300 mt-[40px]">
+                {item.description || "No description available"}
+              </div>
+            )}
               </div>
             </div>
-            <button
-              className="bg-gray-200 px-2 flex justify-center items-center"
-              onClick={handleAddDescription}
-            >
-              v
-            </button>
           </div>
         ))}
-
-      {/* Description dropdown */}
-      {descriptionDropdown && (
-        <div className="h-[150px] w-[70%] ml-[15%] bg-gray-300">
-          {/* Description content here */}
-          hello
-        </div>
-      )}
     </div>
   );
 };

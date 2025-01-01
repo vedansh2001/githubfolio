@@ -68,16 +68,18 @@ const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen
         <div className="bottom-0 bg-gray-300 h-15">
           {isLoggedIn ? (
             <div className="relative group">
+              <Link href="../signup">
               <div>
                 <MdLogout className="text-5xl pl-3 cursor-pointer" />
               </div>
+              </Link>
               <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
                 Logout
               </span>
             </div>
           ) : (
             <div className="relative group">
-              <Link href="../signup">
+              <Link href="../login">
                 <div>
                   <MdLogin className="text-5xl pl-3 cursor-pointer" />
                 </div>

@@ -1,22 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
+// Define the type for the GitHub repository data
+interface GitHubRepo {
+  name: string;
+  html_url: string;
+  description: string | null;
+  created_at: string;
+}
+
 // Function for saving user data in PostgreSQL
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Fetch data from GitHub API
+    // First check if email or githubUsername already exists?
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: body.email },
+          { githubUsername: body.githubUsername }
+        ]
+      }
+    });
+    if (existingUser) {
+      return NextResponse.json({
+        message: existingUser.email === body.email 
+          ? "Email already registered" 
+          : "GitHub username already registered"
+      }, { status: 409 }); // 409 Conflict status code
+    }
+
+    // Fetch user data (like avatar, bio, followers etc) from GitHub API
     const githubResponse = await fetch(`https://api.github.com/users/${body.githubUsername}`);
     if (!githubResponse.ok) {
       return NextResponse.json(
-        { message: "Failed to fetch GitHub details." },
+        { message: "Invalid GitHub username." },
         { status: 400 }
       );
     }
+    
     const githubData = await githubResponse.json();
 
-    // Create a new user in the database
+    // Create a new user in the database with the data (like avatar, bio, followers etc) fetched (just above) from GitHub
     const user = await prisma.user.create({
       data: {
         name: body.name || githubData.name,
@@ -32,19 +58,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Fetch repositories from GitHub API
+    // Fetch repositories of the user from GitHub 
     const githubRepos = await fetch(`https://api.github.com/users/${body.githubUsername}/repos`);
     if (!githubRepos.ok) {
       return NextResponse.json(
-        { message: "Failed to fetch Repository details." },
+        { message: "Failed to fetch Repository details. Please try again" },
         { status: 400 }
       );
     }
 
-    const githubReposData = await githubRepos.json();
+    const githubReposData: GitHubRepo[] = await githubRepos.json();
 
     // Create repositories and associate them with the user
-    const repositoryPromises = githubReposData.map((repo: any) =>
+    const repositoryPromises = githubReposData.map((repo) =>
       prisma.repository.create({
         data: {
           name: repo.name,
@@ -52,7 +78,7 @@ export async function POST(req: NextRequest) {
           description: repo.description || "No description",
           createdAt: new Date(repo.created_at),
           user: {
-            connect: { id: user.id }, // Use the user ID from the created user
+            connect: { id: user.id }, 
           },
         },
       })
@@ -60,14 +86,11 @@ export async function POST(req: NextRequest) {
 
     await Promise.all(repositoryPromises);
 
-    // Redirect to the home page after successful sign-in
-const origin = req.nextUrl.origin; // Extract the origin from the request
-return NextResponse.redirect(`${origin}/`, { status: 303 });
+    return NextResponse.json({ message: "User created successfully!" }, { status: 201 });
 
   } catch (error) {
     console.error("Error:", error);
 
-    // Return error response
     return NextResponse.json(
       { message: "An error occurred while processing your request." },
       { status: 500 }
@@ -78,7 +101,7 @@ return NextResponse.redirect(`${origin}/`, { status: 303 });
 }
 
 // Function for retrieving data from PostgreSQL
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await prisma.user.findUnique({
       where: {

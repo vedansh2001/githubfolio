@@ -20,17 +20,17 @@ export async function POST(req: NextRequest) {
         );
       }
   
-      const newPR = await prisma.pullRequest.create({
-        data: {
-          name: body.title,
-          link: body.html_url,
-          state: body.state,
-          full_name: body.full_name,
-          number: body.number,
-          userId: body.userId, // Add userId
-          repositoryId: body.repositoryId, // Add repositoryId
-        },
-      });
+      // const newPR = await prisma.pullRequest.create({
+      //   data: {
+      //     name: body.title,
+      //     link: body.html_url,
+      //     state: body.state,
+      //     full_name: body.full_name,
+      //     number: body.number,
+      //     userId: body.userId, // Add userId
+      //     repositoryId: body.repositoryId, // Add repositoryId
+      //   },
+      // });
 
        // Fetch all PRs for the user
         const allPRs = await prisma.pullRequest.findMany({

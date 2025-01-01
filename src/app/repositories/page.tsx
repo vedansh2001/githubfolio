@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import SelectedRepositories from "../components/SelectedRepositories/SelectedRepositories";
-import PinnedRepos from "../components/PinnedRepos/PinnedRepos";
 
 interface Repository {
   id: number;
@@ -11,12 +10,12 @@ interface Repository {
 }
 
 
-interface SelectedRepositoriesProps {
-  selectedRepos: Repository[];
-  setSelectedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
-  setAddedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
-  addedRepos: Repository[];
-}
+// interface SelectedRepositoriesProps {
+//   selectedRepos: Repository[];
+//   setSelectedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+//   setAddedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+//   addedRepos: Repository[];
+// }
 
 const Repositories: React.FC = () => {
   const [Repos, setRepos] = useState<Repository[]>([]); 
@@ -59,7 +58,7 @@ const Repositories: React.FC = () => {
       try {
         const res = await fetch("api/repository");
         const data = await res.json();
-        const RepoListExtracted = data.userRepo.map((repo: any) => ({
+        const RepoListExtracted = data.userRepo.map((repo: Repository) => ({
           ...repo,
           isPinned: repo.isPinned || false, // Default value if `isPinned` is missing
         }));

@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { PiPushPinSlashFill } from 'react-icons/pi';
 
 type PR = {
@@ -49,15 +51,34 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({
         Pinned PRs
       </p>
       <div className="w-[80%] ml-[10%] bg-gray-300 h-[80%] border-2 p-4 border-black rounded-sm grid grid-cols-2 gap-4">
-        {isPinnedToShowInPinnedSection.map((item) => (
-          <div className="border-2 border-gray-700" key={item.id}>
+      {isPinnedToShowInPinnedSection?.length > 0 ? (
+        isPinnedToShowInPinnedSection.map((item) => (
+          <div
+          key={item.id}
+          className="border-2 border-gray-700 p-2 flex items-center justify-between cursor-pointer truncate"
+          >
+          <div className="bg-gray-300 truncate max-w-[90%]" >
             {item.name}
           </div>
-        ))}
+           <div>
+             <Link href={item.link}>
+               <FaExternalLinkAlt className="hover:text-blue-500" />
+             </Link>
+           </div>
+           </div>
+        ))
+      ) : (
+        <div>
+            <p className="text-gray-500 col-span-2 text-center">
+              No pinned repositories
+            </p>
+
+        </div>
+      )}
       </div>
     </div>
   );
 };
 
 export default PinnedPRs;
- 
+  

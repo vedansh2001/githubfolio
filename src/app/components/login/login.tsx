@@ -5,10 +5,8 @@ import { useRouter } from "next/navigation";
 import { ChangeEventHandler, useState } from "react";
 import { BiSolidError } from "react-icons/bi";
 
-export function Signup() {
-    const [name, setName] = useState("");
+export function Login() {
     const [password, setPassword] = useState("");
-    const [githubUsername, setGithubUsername] = useState("");
     const [email, setEmail] = useState("");
     const router = useRouter();
     const [loading, setLoading] = useState(false)
@@ -18,18 +16,12 @@ export function Signup() {
     return (
         <div className="h-screen flex justify-center flex-col">
             <div className="flex justify-center">
-                <div className="block w-[25%] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 ">
+                <div className="block w-[22%] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 ">
                     <div>
                         <div className="px-10">
-                            <div className="text-3xl font-extrabold flex justify-center">Sign up</div>
+                            <div className="text-3xl font-extrabold flex justify-center">Log In</div>
                         </div>
                         <div className="pt-2">
-                            <LabelledInput
-                                onChange={(e) => setName(e.target.value)}
-                                label="Name"
-                                placeholder="John Yadav"
-                                key="name"
-                            />
                             <LabelledInput
                                 onChange={(e) => setEmail(e.target.value)}
                                 label="Email"
@@ -43,20 +35,13 @@ export function Signup() {
                                 placeholder="password"
                                 key="password"
                             />
-                            <LabelledInput
-                                onChange={(e) => setGithubUsername(e.target.value)}
-                                label="GitHub Username"
-                                type="text"
-                                placeholder="GitHub Username"
-                                key="github_username"
-                            />
-                            <div className="pt-4 text-xs flex justify-center font-semibold" >Already have an account? 
-                                <Link href="/login" className="text-blue-600 font-semibold ml-1">Log in
+                            <div className="pt-4 text-xs flex justify-center font-semibold" >Create account? 
+                                <Link href="/signup" className="text-blue-600 font-semibold ml-1">Sign Up
                                 </Link>
                             </div>
                             <button
                                 onClick={async () => {
-                                    if (!name || !password || !githubUsername) {                                        
+                                    if (!password || !email) {                                     
                                         setGoterror(true)
                                         setTexterror("Please fill in all fields")
                                         return;
@@ -64,39 +49,36 @@ export function Signup() {
                                     setLoading(true);
 
                                     try {
-
-
-                                        const response = await fetch("http://localhost:3000/api/user",{ 
-                                                method: "POST",
-                                                headers: {
-                                                    "Content-Type": "application/json"
-                                                },
-                                                body: JSON.stringify({name, password, githubUsername, email})
-                                        });
-                                        
-
-                                        if (!response.ok) {
+                                        const response = await fetch("http://localhost:3000/api/userlogin", {
+                                            method: "POST",
+                                            headers: {
+                                              "Content-Type": "application/json",
+                                            },
+                                            body: JSON.stringify({ email, password }),
+                                          });
                                           const data = await response.json()
-                                          setGoterror(true)
-                                          const errormessage = data.message
-                                          setTexterror(errormessage)
-                                          throw new Error(`Error: ${response.statusText}`);
-                                        }
-                                        router.push("/");
 
+                                          if (!response.ok) {
+                                            setGoterror(true)
+                                            const errormessage = data.message
+                                            setTexterror(errormessage)
+                                            throw new Error(`Error: ${response.statusText}`);
+                                          }
+
+                                        router.push("/");
                                     } catch (error) {
-                                        console.error("Error during signup:", error);
+                                        console.error("Error during Login:", error);
                                     } finally{
                                         setLoading(false);
                                     }
-                                 }}
+                                }}
                                 disabled={loading}
                                 type="button"
                                 className={`mt-2 w-full text-white bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 flex justify-center
-                                ${loading? "cursor-not-allowed opacity-50" : ""}
-                                `}
-                            >
-                {loading ? (
+                                    ${loading? "cursor-not-allowed opacity-50" : ""}
+                                    `}
+                                >
+                  {loading ? (
                   <>
                     <svg
                       className="animate-spin h-5 w-5 text-white mr-2 flex cursor-not-allowed"
@@ -120,19 +102,18 @@ export function Signup() {
                     </svg>
                   </>
                 ) : (
-                  "Sign up"
+                  "Sign in"
                 )}
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-            
-                        {goterror && <div className="flex justify-center items-center text-gray-600 font-semibold mt-2" >
-                        <BiSolidError className="mr-1 text-red-500 text-xl"/>
-                        {texterror}
-                        </div>
-                        }
+            {goterror && <div className="flex justify-center items-center text-gray-600 font-semibold mt-2" >
+            <BiSolidError className="mr-1 text-red-500 text-xl"/>
+            {texterror}
+            </div>
+            }
         </div>
     );
 }
