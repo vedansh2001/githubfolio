@@ -8,14 +8,17 @@ interface Repository {
   name: string;
   link: string;
 }
+interface usernameprop {
+  username: string;
+}
 
-const PinnedRepos = () => {
+const PinnedRepos: React.FC<usernameprop> = ({ username }) => {
   const [fetchedPinnedRepos, setFetchedPinnedRepos] = useState<Repository[]>([]);
 
   useEffect(() => {
     const fetchdata = async () => {
       try {
-        const res = await fetch(`api/fetchPinnedRepos?t=${Date.now()}`, {
+        const res = await fetch(`api/fetchPinnedRepos/?username=${username}`, {
           method: "GET",
           cache: 'no-store'
         });

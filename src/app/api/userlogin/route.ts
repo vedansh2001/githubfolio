@@ -23,6 +23,8 @@ export async function POST(req: NextRequest) {
         email,
       },
     });
+    console.log("here is user: ",user);
+    
 
     // If no user found or password doesn't match
     if (!user || user.password !== password) {
@@ -33,8 +35,11 @@ export async function POST(req: NextRequest) {
         { status: 401 } // 401 is more appropriate for unauthorized access
       );
     }
+    const username = user?.githubUsername;
+    console.log("reached final stage");
+    
 
-    return NextResponse.json({ user }, { status: 200 });
+    return NextResponse.json({ user, username }, { status: 200 });
 
     } catch (error) {
         console.error("Login error:", error);

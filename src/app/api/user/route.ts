@@ -8,9 +8,13 @@ interface GitHubRepo {
   description: string | null;
   created_at: string;
 }
+// interface UserPageProps {
+//   params: { username: string };
+// }
 
-// Function for saving user data in PostgreSQL
+// Function for saving user data in PostgreSQL when signup
 export async function POST(req: NextRequest) {
+
   try {
     const body = await req.json();
 
@@ -58,6 +62,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    const username = user?.githubUsername;
+
     // Fetch repositories of the user from GitHub 
     const githubRepos = await fetch(`https://api.github.com/users/${body.githubUsername}/repos`);
     if (!githubRepos.ok) {
@@ -86,7 +92,7 @@ export async function POST(req: NextRequest) {
 
     await Promise.all(repositoryPromises);
 
-    return NextResponse.json({ message: "User created successfully!" }, { status: 201 });
+    return NextResponse.json({ message: "User created successfully!", username }, { status: 201 });
 
   } catch (error) {
     console.error("Error:", error);
@@ -100,12 +106,22 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// ----------------------------------------------------------------------------------------------------------------------------
+
 // Function for retrieving data from PostgreSQL
-export async function GET() {
+export async function GET( req: NextRequest) {
+
+  const { searchParams } = new URL(req.url);
+  const username = searchParams.get("username");
+
+  if (!username) {
+    return NextResponse.json({ message: "Username is required" }, { status: 400 });
+  }
   try {
+    
     const user = await prisma.user.findUnique({
       where: {
-        email: "vedanshm2001@gmail.com",
+        githubUsername: username
       },
     });
     if (!user) {
@@ -116,6 +132,7 @@ export async function GET() {
         { status: 404 }
       );
     }
+    
     return NextResponse.json({ user }, { status: 200 });
   } catch (error) {
     console.error("Error fetching user:", error);

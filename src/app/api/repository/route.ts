@@ -4,11 +4,32 @@ import { prisma } from "../../../../lib/prisma";
 
 
 //this function will fetch the user repositories as well as selected repos
-export async function GET(_: NextRequest){
+export async function GET(req: NextRequest){
+  const { searchParams } = new URL(req.url);
+    const username = searchParams.get("username");
+    console.log("this is the username just after receiving form props :::::", username);
+    
+    if (!username) {
+        return NextResponse.json({ message: "Username is required" }, { status: 400 });
+    }
+    const user = await prisma.user.findUnique({
+        where: {
+          githubUsername: username,
+        },
+    });
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+    // console.log("hello mister this is user information fetched", user.id);
     try {
         const user = await prisma.user.findUnique({
             where: {
-                email: "vedanshm2001@gmail.com"
+              githubUsername: username,
             }
         });
         if (!user) {
@@ -28,6 +49,7 @@ export async function GET(_: NextRequest){
 
         const selectedRepos = await prisma.repository.findMany({
             where: {
+                userId: user.id,
                 isSelected: true,
             },
         })
@@ -50,6 +72,25 @@ export async function GET(_: NextRequest){
 export async function POST(req:NextRequest) {
     try {
         const idString = req.nextUrl.searchParams.get('Id'); 
+        const username = req.nextUrl.searchParams.get('username'); 
+
+        if (!username) {
+          return NextResponse.json({ message: "Username is required" }, { status: 400 });
+      }
+      const user = await prisma.user.findUnique({
+          where: {
+            githubUsername: username,
+          },
+      });
+      if (!user) {
+        return NextResponse.json(
+          {
+            message: "User not found",
+          },
+          { status: 404 }
+        );
+      }
+      
         
         if (!idString) {
           return NextResponse.json(
@@ -68,7 +109,7 @@ export async function POST(req:NextRequest) {
     
         await prisma.repository.update({
           where: {
-            id: id, // Find by the repo name
+            id: id, // Find by the repo id
           },
           data: {
             isSelected: true, // Update the isSelected field
@@ -78,6 +119,7 @@ export async function POST(req:NextRequest) {
 
         const selectedRepos = await prisma.repository.findMany({
             where: {
+                userId: user.id,
                 isSelected: true,
             },
         })

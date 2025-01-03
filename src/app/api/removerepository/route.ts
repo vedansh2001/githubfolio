@@ -4,6 +4,24 @@ import { prisma } from "../../../../lib/prisma";
 export async function PUT(req: NextRequest) {
     try {
         const idString = req.nextUrl.searchParams.get('Id'); 
+        const username = req.nextUrl.searchParams.get('username'); 
+
+        if (!username) {
+          return NextResponse.json({ message: "Username is required" }, { status: 400 });
+      }
+      const user = await prisma.user.findUnique({
+          where: {
+            githubUsername: username,
+          },
+      });
+      if (!user) {
+        return NextResponse.json(
+          {
+            message: "User not found",
+          },
+          { status: 404 }
+        );
+      }
 
         if (!idString) {
             return NextResponse.json(
@@ -31,6 +49,7 @@ export async function PUT(req: NextRequest) {
 
         const selectedRepos = await prisma.repository.findMany({
             where: {
+                userId: user.id,
                 isSelected: true,
             },
         })

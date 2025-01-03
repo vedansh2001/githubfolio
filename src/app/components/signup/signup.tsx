@@ -73,16 +73,17 @@ export function Signup() {
                                                 },
                                                 body: JSON.stringify({name, password, githubUsername, email})
                                         });
+                                        const data = await response.json()
                                         
 
                                         if (!response.ok) {
-                                          const data = await response.json()
                                           setGoterror(true)
                                           const errormessage = data.message
                                           setTexterror(errormessage)
                                           throw new Error(`Error: ${response.statusText}`);
                                         }
-                                        router.push("/");
+                                        const username = data.username;
+                                        router.push(`/${username}`);
 
                                     } catch (error) {
                                         console.error("Error during signup:", error);

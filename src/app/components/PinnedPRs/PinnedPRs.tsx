@@ -17,21 +17,32 @@ type PR = {
   userId: number;
 };
 
+// interface usernameprop {
+//   username: string;
+// }
 type PinnedPRsProps = {
   //  fetchPinnedPRs: () => Promise<void>; 
    isPinnedToShowInPinnedSection: PR[] ;
    setIsPinnedToShowInPinnedSection: React.Dispatch<React.SetStateAction<PR[]>>;
+   username: string;
   };
 
 const PinnedPRs: React.FC<PinnedPRsProps> = ({
   isPinnedToShowInPinnedSection,
   setIsPinnedToShowInPinnedSection,
+  username,
 }) => {
   
   
   const fetchPinnedPRs = async () => {
     try {
-      const res = await fetch('api/fetchPinnedPRs');
+      const res = await fetch(`/api/fetchPinnedPRs/?username=${username}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          }
+      });
+
       const data = await res.json();
       setIsPinnedToShowInPinnedSection(data.isPinnedToShowInPinnedSection);
     } catch (error) {

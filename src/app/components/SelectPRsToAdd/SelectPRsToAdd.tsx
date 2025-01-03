@@ -68,6 +68,7 @@ const SelectPRsToAdd = ({
     toggleDropdown("repo");
     fetchRepoDetails(name);
   };
+// console.log("this is the userid :::::::::",userId);
 
   const handleAddPR = async (item: PR) => {
     setLoadingPR(item.number); // Start loading for the specific PR
@@ -79,8 +80,8 @@ const SelectPRsToAdd = ({
         html_url: item.html_url,
         state: item.state,
         full_name: repo_fullName,
-        userId,
         repositoryId: repoId,
+        userId,
       };
 
       const res = await fetch("/api/selectPRofRepo", {
@@ -106,7 +107,7 @@ const SelectPRsToAdd = ({
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        const res = await fetch("/api/repository");
+        const res = await fetch(`/api/repository?username=${username}`);
         const data = await res.json();
         setRepos(data.userRepo || []);
       } catch (error) {

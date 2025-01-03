@@ -8,6 +8,26 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('userId');
 
+    // const username = searchParams.get('username');
+
+    // if (!username) {
+    //   return NextResponse.json({ message: "Username is required" }, { status: 400 });
+    // }
+    
+    // const user = await prisma.user.findUnique({
+    //     where: {
+    //       githubUsername: username,
+    //     },
+    // });
+    // if (!user) {
+    //   return NextResponse.json(
+    //     {
+    //       message: "User not found",
+    //     },
+    //     { status: 404 }
+    //   );
+    // }
+
     // const params = new URLSearchParams(window.location.search);
     // const id = params.get('data');
     // console.log("id is here ",id);

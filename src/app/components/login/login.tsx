@@ -57,6 +57,7 @@ export function Login() {
                                             body: JSON.stringify({ email, password }),
                                           });
                                           const data = await response.json()
+                                          const username = data.username;
 
                                           if (!response.ok) {
                                             setGoterror(true)
@@ -65,7 +66,7 @@ export function Login() {
                                             throw new Error(`Error: ${response.statusText}`);
                                           }
 
-                                        router.push("/");
+                                        router.push(`/${username}`);
                                     } catch (error) {
                                         console.error("Error during Login:", error);
                                     } finally{

@@ -8,6 +8,7 @@ export async function PUT(req: NextRequest) {
     try {
       const idString = req.nextUrl.searchParams.get("Id");
       const action = req.nextUrl.searchParams.get("action"); // 'pin' or 'unpin'
+      const username = req.nextUrl.searchParams.get("username")
   
       // Validate 'Id' and 'action' parameters
       if (!idString || !action) {
@@ -17,6 +18,24 @@ export async function PUT(req: NextRequest) {
           { status: 400 }
         );
       }
+
+      if (!username) {
+          return NextResponse.json({ message: "Username is required" }, { status: 400 });
+        }
+        
+        const user = await prisma.user.findUnique({
+            where: {
+              githubUsername: username,
+            },
+        });
+        if (!user) {
+          return NextResponse.json(
+            {
+              message: "User not found",
+            },
+            { status: 404 }
+          );
+        }
   
       const id = parseInt(idString, 10);
       if (isNaN(id)) {
@@ -45,7 +64,10 @@ export async function PUT(req: NextRequest) {
       });
   
       const pinnedPRs = await prisma.pullRequest.findMany({
-        where: { isPinned: true },
+        where: { 
+          userId: user.id,
+          isPinned: true
+         },
       });
   
   

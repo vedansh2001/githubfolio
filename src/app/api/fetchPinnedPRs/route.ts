@@ -1,11 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
-export async function GET(_: NextRequest) {
-    try {
-        
+export async function GET(req: NextRequest) {
+    const { searchParams } = new URL(req.url);
+    const username = searchParams.get("username");
+    // console.log("this is the username just after receiving form props :::::", username);
+    
+    if (!username) {
+        return NextResponse.json({ message: "Username is required" }, { status: 400 });
+    }
+    const user = await prisma.user.findUnique({
+        where: {
+          githubUsername: username,
+        },
+    });
+    if (!user) {
+      return NextResponse.json(
+        {
+          message: "User not found",
+        },
+        { status: 404 }
+      );
+    }
+    // console.log("hello mister this is user information fetched", user.id);
+
+    try {        
         const isPinnedToShowInPinnedSection = await prisma.pullRequest.findMany({
             where: {
+                userId:user.id,
                 isPinned: true,
             },
         })

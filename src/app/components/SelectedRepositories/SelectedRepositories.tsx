@@ -7,24 +7,29 @@ interface Repository {
   name: string;
   isPinned?: boolean;
 }
+// interface usernameprop {
+//   username: string;
+// }
 
 interface SelectedRepositoriesProps {
   selectedRepos: Repository[];
   setSelectedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
   setAddedRepos: React.Dispatch<React.SetStateAction<Repository[]>>;
+  username:string;
 }
 
 const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
   selectedRepos,
   setSelectedRepos,
   setAddedRepos,
+  username,
 }) => {
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null); // For deleting
   const [pinLoadingRepoId, setPinLoadingRepoId] = useState<number | null>(null); // For pinning/unpinning
 
   const handleRemoveRepo = (id: number) => {
-    setLoadingRepoId(id);
 
+    setLoadingRepoId(id);
     const fetchdata = async (id: number) => {
       try {
         //repo should be unpinned also if it is being removed from selected repos.
@@ -32,7 +37,9 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
           method: "PUT",
         });
         //remove repo from selected repos.
-        const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
+        // const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
+        
+        const url = `/api/removerepository?Id=${encodeURIComponent(id)}&username=${username}`;
         const res = await fetch(url, { method: "PUT" });
 
         if (!res.ok) {

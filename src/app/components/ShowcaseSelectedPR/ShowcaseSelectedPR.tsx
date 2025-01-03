@@ -17,6 +17,9 @@ type PR = {
   userId: number;
 };
 
+// interface usernameprop {
+//   username: string;
+// }
 type ShowcaseSelectedPRProps = {
   setListofSelectedPRs: React.Dispatch<React.SetStateAction<PR[]>>; // State setter for PR array
   listOfSelectedPRs: PR[]; // Array of PR objects
@@ -24,15 +27,17 @@ type ShowcaseSelectedPRProps = {
   repo_fullName: string; // Repository full name
   userId: number; // User ID
   setIsPinnedToShowInPinnedSection: React.Dispatch<React.SetStateAction<PR[]>>;
+  username:string;
 };
 
 const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   setListofSelectedPRs,
   listOfSelectedPRs = [], // Default to an empty array if undefined or null
   repositoryLink,
-  repo_fullName,
+  // repo_fullName,
   userId,
   setIsPinnedToShowInPinnedSection,
+  username,
 }) => {
   const [loadingPR, setLoadingPR] = useState<number | null>(null); // PR ID being pinned/unpinned
   const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null); // Tracks which PR's description is open
@@ -58,7 +63,7 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
     const action = shouldPin ? "pin" : "unpin";
 
     try {
-      const response = await fetch(`/api/PinUnpinPRs?Id=${id}&action=${action}`, {
+      const response = await fetch(`/api/PinUnpinPRs?Id=${id}&action=${action}&username=${username}`, {
         method: "PUT",
       });
 
