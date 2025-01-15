@@ -23,12 +23,14 @@ export function Login() {
                         </div>
                         <div className="pt-2">
                             <LabelledInput
+                                value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 label="Email"
                                 placeholder="John@gmail.com"
                                 key="email"
                             />
                             <LabelledInput
+                                value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 label="Password"
                                 type="password"
@@ -124,6 +126,7 @@ function LabelledInput({ label, placeholder, type, onChange }: LabelledInputType
         <div>
             <label className="block mb-2 text-sm text-black font-semibold pt-4">{label}</label>
             <input
+                value={value}
                 onChange={onChange}
                 type={type || "text"}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -141,5 +144,6 @@ interface LabelledInputType {
     label: string;
     placeholder: string;
     type?: string;
+    value?: string;
     onChange: ChangeEventHandler<HTMLInputElement>;
 }
