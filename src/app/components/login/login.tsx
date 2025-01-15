@@ -6,8 +6,8 @@ import { ChangeEventHandler, useState } from "react";
 import { BiSolidError } from "react-icons/bi";
 
 export function Login() {
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("GuestAccount");
+    const [email, setEmail] = useState("vedanshmdev@gmail.com");
     const router = useRouter();
     const [loading, setLoading] = useState(false)
     const [goterror, setGoterror] = useState(Boolean)
