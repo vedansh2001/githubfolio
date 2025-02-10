@@ -15,8 +15,6 @@ interface UserPageProps {
     params: { username: string };
   }
   
-
-
 export default function Home({ params }: UserPageProps) {
 
   const { username } = params;
@@ -110,14 +108,6 @@ export default function Home({ params }: UserPageProps) {
     };
     fetchPinnedPRs();
   }, []);
-  
-//   setTimeout(() => {
-//     console.log("this is the userId that was fetched on homepage outside 12345678901234567890: ", userId);            
-// }, 4000);
-  
-
-   
-
 
  
   return (

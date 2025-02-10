@@ -8,9 +8,6 @@ interface GitHubRepo {
   description: string | null;
   created_at: string;
 }
-// interface UserPageProps {
-//   params: { username: string };
-// }
 
 // Function for saving user data in PostgreSQL when signup
 export async function POST(req: NextRequest) {
