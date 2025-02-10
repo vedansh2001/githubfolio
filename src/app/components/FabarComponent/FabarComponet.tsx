@@ -12,7 +12,6 @@ import Image from "next/image";
 interface FabarComponentProps {
   barisopen: boolean;
   setBarisopen: React.Dispatch<React.SetStateAction<boolean>>;
-  isLoggedIn: boolean;
 }
 
 const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen }) => {
