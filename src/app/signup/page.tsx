@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChangeEventHandler, useEffect, useState } from "react";
 import { BiSolidError } from "react-icons/bi";
 
-export function Signup() {
+export default function Signup() {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [githubUsername, setGithubUsername] = useState("");
