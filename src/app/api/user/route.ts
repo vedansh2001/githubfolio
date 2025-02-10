@@ -49,16 +49,16 @@ export async function POST(req: NextRequest) {
     // Create a new user in the database with the data (like avatar, bio, followers etc) fetched (just above) from GitHub
     const user = await prisma.user.create({
       data: {
-        name: body.name || githubData.name,
+        name: body.name || githubData.name || "User", // Default fallback name
         githubUsername: body.githubUsername,
-        email: body.email,
-        password: body.password,
-        bio: githubData.bio,
-        location: githubData.location,
+        email: body.email || "not_provided", // Handle missing email gracefully
+        password: body.password || null, // Ensure passwords are handled properly
+        bio: githubData.bio || "No bio available",
+        location: githubData.location || "Unknown",
         followers: githubData.followers || 0,
         following: githubData.following || 0,
         publicRepos: githubData.public_repos || 0,
-        imageURL: githubData.avatar_url,
+        imageURL: githubData.avatar_url || "", // Handle missing avatar
       },
     });
 

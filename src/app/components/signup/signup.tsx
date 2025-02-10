@@ -1,8 +1,9 @@
 "use client";
 
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEventHandler, useState } from "react";
+import { ChangeEventHandler, useEffect, useState } from "react";
 import { BiSolidError } from "react-icons/bi";
 
 export function Signup() {
@@ -14,6 +15,17 @@ export function Signup() {
     const [loading, setLoading] = useState(false)
     const [goterror, setGoterror] = useState(Boolean)
     const [texterror, setTexterror] = useState(String)
+    const [githubLoading, setGithubLoading] = useState(false); 
+      const { data: session } = useSession(); // ✅ Fe
+
+    // ✅ Redirect only after the component is mounted
+      useEffect(() => {
+        if (session?.user?.githubUsername) {
+          router.push(`/${session.user.githubUsername}`);
+        }
+      }, [session, router]); // ✅ Runs only when session updates
+
+    
 
     return (
         <div className="h-screen flex justify-center flex-col">
@@ -124,6 +136,68 @@ export function Signup() {
                   "Sign up"
                 )}
                             </button>
+
+
+                    <div className="flex w-full justify-center">or</div>
+                    
+                                  {/* 🔹 GitHub Login Button with Animation */}
+                                  <button
+  className="mt-2 w-full text-white bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 flex justify-center"
+  onClick={async () => {
+    setGithubLoading(true);
+    try {
+      const result = await signIn("github", { redirect: false }); // Prevent default redirection
+      
+      if (!result || result.error) {
+        throw new Error("GitHub authentication failed");
+      }
+
+      // ✅ Fetch updated session
+      // const response = await fetch("/api/auth/session", { cache: "no-store" });
+      // const session = await response.json();
+
+      // if (!session?.user?.githubUsername) {
+      //   throw new Error("GitHub username not found");
+      // }
+
+      // // ✅ Redirect to the user's profile
+      // window.location.href = `/${session.user.githubUsername}`;
+
+
+    } catch (error) {
+      console.error("GitHub login failed:", error);
+    } finally {
+      setGithubLoading(false);
+    }
+  }}
+  disabled={githubLoading}
+>
+                                    {githubLoading ? (
+                                      <svg
+                                        className="animate-spin h-5 w-5 text-white mr-2 flex cursor-not-allowed"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                      >
+                                        <circle
+                                          className="opacity-25"
+                                          cx="12"
+                                          cy="12"
+                                          r="10"
+                                          stroke="currentColor"
+                                          strokeWidth="4"
+                                        ></circle>
+                                        <path
+                                          className="opacity-75"
+                                          fill="currentColor"
+                                          d="M4 12a8 8 0 018-8v8H4z"
+                                        ></path>
+                                      </svg>
+                                    ) : (
+                                      "Signin with Github"
+                                    )}
+                                  </button>
+
                         </div>
                     </div>
                 </div>

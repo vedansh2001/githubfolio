@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { FaBars } from "react-icons/fa";
-import { MdLogin, MdLogout } from "react-icons/md";
+// import { MdLogin, MdLogout } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
+// import { auth } from "../../auth";
+// import Image from "next/image";
+// import Logout from "../Logout/Logout";
+// import SignIn from "../LoginGithub/loginGithub";
 
 interface FabarComponentProps {
   barisopen: boolean;
@@ -11,6 +15,7 @@ interface FabarComponentProps {
 }
 
 const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen, isLoggedIn }) => {
+  // const session = await auth();
   const boxRef = useRef<HTMLDivElement | null>(null);
 
   const handleOnClick = () => {
@@ -66,29 +71,66 @@ const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen
         </div>
 
         <div className="bottom-0 bg-gray-300 h-15">
-          {isLoggedIn ? (
-            <div className="relative group">
-              <Link href="../signup">
-              <div>
-                <MdLogout className="text-5xl pl-3 cursor-pointer" />
-              </div>
-              </Link>
-              <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                Logout
-              </span>
-            </div>
-          ) : (
-            <div className="relative group">
-              <Link href="../login">
-                <div>
-                  <MdLogin className="text-5xl pl-3 cursor-pointer" />
+              {/* {isLoggedIn ? (
+                <div className="relative group">
+                  <Link href="../signup">
+                  <div>
+                    <MdLogout className="text-5xl pl-3 cursor-pointer" />
+                  </div>
+                  </Link>
+                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                    Logout
+                  </span>
                 </div>
-              </Link>
-              <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                Login
-              </span>
-            </div>
-          )}
+              ) : (
+                <div className="relative group">
+                  <Link href="../login">
+                    <div>
+                      <MdLogin className="text-5xl pl-3 cursor-pointer" />
+                    </div>
+                  </Link>
+                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                    Login
+                  </span>
+                </div>
+              )} */}
+
+              {/* {!session?.user ? (
+                <div className="relative group">
+                <Link href="../login">
+                  <div>
+                    <MdLogin className="text-5xl pl-3 cursor-pointer" />
+                  </div>
+                </Link>
+                <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                  Login
+                </span>
+              </div>
+              ) : (
+                <div className="relative group">
+                  {session.user.name}
+                  {session.user.image && (
+                    <Image 
+                      src={session.user.image}
+                      width={30}
+                      height={30}
+                      alt="User Avatar"
+                      className="rounded-full"
+                    />
+                  ) }
+                  <Link href="../signup">
+                  <div>
+                    <MdLogout className="text-5xl pl-3 cursor-pointer" />
+                  </div>
+                  </Link>
+                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                    Logout
+                  </span>
+                  <Logout/>
+                  
+                </div>
+              )} 
+              <SignIn/> */}
         </div>
       </div>
 

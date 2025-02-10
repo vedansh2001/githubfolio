@@ -33,7 +33,10 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({
   username,
 }) => {
   
-  
+ 
+
+  useEffect(() => {
+     
   const fetchPinnedPRs = async () => {
     try {
       const res = await fetch(`/api/fetchPinnedPRs/?username=${username}`, {
@@ -49,8 +52,6 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({
       console.log('Failed to fetch Pinned PRs: ', error);
     }
   };
-
-  useEffect(() => {
     setIsPinnedToShowInPinnedSection(isPinnedToShowInPinnedSection)
       fetchPinnedPRs();
   }, []);

@@ -1,7 +1,10 @@
-import { Login } from "../components/login/login";
+// import { signIn } from "@/auth"
+import { Login } from "../components/login/login"
 
-export default function() {
-    return <div>
+const SignIn = () => {
+    return (
         <Login/>
-    </div>
+      )
 }
+
+export default SignIn
