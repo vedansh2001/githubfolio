@@ -1,7 +1,7 @@
 "use server";
 
 import { signIn, auth } from "@/auth";
-import { CredentialsSignin } from "next-auth";
+// import { CredentialsSignin } from "next-auth";
 import { redirect } from "next/navigation";
 import prisma from "../../db";
 const credentialsLogin = async (email: string, password: string) => {
@@ -33,7 +33,7 @@ const credentialsLogin = async (email: string, password: string) => {
     redirect(`/${user.githubUsername}`);
   } catch (error) {
     console.error("Login error:", error);
-    return error.message || "Login failed. Please try again.";
+    // return error.message || "Login failed. Please try again.";
   }
 };
 
