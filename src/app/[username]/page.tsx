@@ -62,7 +62,8 @@ export default function Home({ params }: UserPageProps) {
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
     
-
+  console.log(setIsloggedIn);
+  
   useEffect(() => {
     const fetchdata = async () => {
       try {

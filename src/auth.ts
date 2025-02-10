@@ -2,7 +2,7 @@ import NextAuth, { AuthError, CredentialsSignin } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import CredentialProvider from "next-auth/providers/credentials";
 import prisma from "../db";
-import { compare } from "bcryptjs";
+// import { compare } from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -34,7 +34,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         if (!isMatch) throw new CredentialsSignin("Invalid Email or Password");
 
         // return { id: user.id, name: user.name, email: user.email, githubUsername: user.githubUsername };
-        return user;
+        return {
+          ...user,
+          id: user.id.toString(), // ✅ Ensure id is a string
+        };
       },
     }),
   ],
@@ -42,14 +45,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ account, profile }) {
         if (account?.provider === "github") {
             try {
-                const githubProfile = profile as any;
-                const githubUsername = githubProfile?.login;
-                console.log("this is the githubprofile data so that you know what you get -----------------------", githubProfile);
+                // const githubProfile = profile as any;
+                const githubUsername = profile?.login;
+                console.log("this is the githubprofile data so that you know what you get -----------------------", profile);
                 
-                const email = githubProfile?.email;  // Get email if available
+                const email = profile?.email;  // Get email if available
                 
                 console.log("GitHub Username:", githubUsername);
                 console.log("GitHub Email:", email);
@@ -60,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
     
                 // 🔹 Check if user already exists in the database by email or GitHub username
-                let existingUser = await prisma.user.findFirst({
+                const existingUser = await prisma.user.findFirst({
                     where: {
                         OR: [
                             { email: email || "" }, // Only check if email exists
@@ -89,15 +92,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               // const url = "http://localhost:3000/";
               console.log("this is the url------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- :", url);
               
-              existingUser = await fetch(`${url}/api/user`, { 
+               await fetch(`${url}/api/user`, { 
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json"
                 },
                 body: JSON.stringify({  
-                  name: githubProfile?.name,  // ✅ Fixed JSON formatting
+                  name: profile?.name,  // ✅ Fixed JSON formatting
                   githubUsername: githubUsername,
-                  email: githubProfile?.email || "not_provided", // ✅ Fallback if email is missing
+                  email: profile?.email || "not_provided", // ✅ Fallback if email is missing
                   password: null,
                 }),
               });
@@ -122,18 +125,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     
 
     async jwt({ token, user, account, profile }) {
-      if (account?.provider === "github") {
-        token.githubUsername = profile?.login || user?.githubUsername;
-      }
-      return token;
-    },
-    
-    async session({ session, token }) {
-      if (token.githubUsername) {
-        session.user.githubUsername = token.githubUsername;
-      }
-      return session;
-    },
+  if (account?.provider === "github") {
+    token.githubUsername = profile?.login;
+  }
+  if (user?.githubUsername) {
+    token.githubUsername = user.githubUsername;
+  }
+  return token;
+},
+
+
+async session({ session, token }) {
+  if (token.githubUsername) {
+    session.user = session.user || {}; // Ensure `user` exists
+    session.user.githubUsername = token.githubUsername as string; // Explicitly cast as string
+  }
+  return session;
+},
+
     
   },
 });

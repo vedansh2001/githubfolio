@@ -14,7 +14,7 @@ interface FabarComponentProps {
   isLoggedIn: boolean;
 }
 
-const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen, isLoggedIn }) => {
+const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen }) => {
   // const session = await auth();
   const boxRef = useRef<HTMLDivElement | null>(null);
 
