@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { FaBars } from "react-icons/fa";
-// import { MdLogin, MdLogout } from "react-icons/md";
+import { MdLogin, MdLogout } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
+import { signOut, useSession } from "next-auth/react";
 // import { auth } from "../../auth";
-// import Image from "next/image";
+import Image from "next/image";
 // import Logout from "../Logout/Logout";
 // import SignIn from "../LoginGithub/loginGithub";
 
@@ -17,6 +18,11 @@ interface FabarComponentProps {
 const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen }) => {
   // const session = await auth();
   const boxRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: session } = useSession();
+
+console.log("this is sessisin.image: ", session);
+
 
   const handleOnClick = () => {
     setBarisopen(false);
@@ -95,42 +101,42 @@ const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen
                 </div>
               )} */}
 
-              {/* {!session?.user ? (
-                <div className="relative group">
-                <Link href="../login">
-                  <div>
-                    <MdLogin className="text-5xl pl-3 cursor-pointer" />
+          {!session?.user ? (
+                  <div className="relative group">
+                    <Link href="/login">
+                      <div>
+                        <MdLogin className="text-5xl pl-3 cursor-pointer" />
+                      </div>
+                    </Link>
+                    <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                      Login
+                    </span>
                   </div>
-                </Link>
-                <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                  Login
-                </span>
-              </div>
-              ) : (
-                <div className="relative group">
-                  {session.user.name}
-                  {session.user.image && (
-                    <Image 
-                      src={session.user.image}
-                      width={30}
-                      height={30}
-                      alt="User Avatar"
-                      className="rounded-full"
-                    />
-                  ) }
-                  <Link href="../signup">
-                  <div>
-                    <MdLogout className="text-5xl pl-3 cursor-pointer" />
+                ) : (
+                  <div className="relative group flex items-center gap-2">
+                    <span>{session.user.name}</span>
+                    {session.user.image && (
+                      <Image
+                        src={session.user.image}
+                        width={30}
+                        height={30}
+                        alt="User Avatar"
+                        className="rounded-full"
+                      />
+                    )}
+                    <button
+                      onClick={() => signOut({ callbackUrl: "/login" })}
+                      className="flex items-center"
+                    >
+                      <MdLogout className="text-5xl pl-3 cursor-pointer" />
+                    </button>
+
+
+                    <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                      Logout
+                    </span>
                   </div>
-                  </Link>
-                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                    Logout
-                  </span>
-                  <Logout/>
-                  
-                </div>
-              )} 
-              <SignIn/> */}
+                )}
         </div>
       </div>
 

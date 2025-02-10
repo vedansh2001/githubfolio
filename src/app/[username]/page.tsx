@@ -55,12 +55,9 @@ export default function Home({ params }: UserPageProps) {
   });
   
   const [barisopen, setBarisopen] = useState(false)
-  const [isLoggedIn, setIsloggedIn] = useState(false);
   const [userId, setUserId] = useState<number>(0);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
-    
-  console.log(setIsloggedIn);
   
   useEffect(() => {
     const fetchdata = async () => {
@@ -113,7 +110,7 @@ export default function Home({ params }: UserPageProps) {
   return (
     <div className=" h-screen bg-gray-300" >
 
-      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen} isLoggedIn={isLoggedIn} />
+      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen}  />
 
 
       <div className="h-[90%] bg-gray-300 flex justify-between w-[80%] p-4 mx-[10%] border-2 border-dashed border-black" >
