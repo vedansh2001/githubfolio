@@ -33,7 +33,7 @@ const credentialsLogin = async (email: string, password: string) => {
     redirect(`/${user.githubUsername}`);
   } catch (error) {
     console.error("Login error:", error);
-    // return error.message || "Login failed. Please try again.";
+    return "Login failed. Please try again.";
   }
 };
 
