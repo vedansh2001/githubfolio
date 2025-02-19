@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
 import { FaExternalLinkAlt, FaSpinner } from "react-icons/fa"; // Spinner icon for loading
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { useSession } from "next-auth/react";
 
 type PR = {
   createdAt: string; // ISO Date format
@@ -41,6 +42,7 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
 }) => {
   const [loadingPR, setLoadingPR] = useState<number | null>(null); // PR ID being pinned/unpinned
   const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null); // Tracks which PR's description is open
+  const session = useSession();
 
   useEffect(() => {
     if (userId !== 0) {
@@ -59,6 +61,10 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   }, [userId, setListofSelectedPRs]);
 
   const handlePinUnpin = async (id: number, shouldPin: boolean) => {
+    if(session.status !== "authenticated"){
+      alert("You are not authorized to make changes.");
+      return;
+    }
     setLoadingPR(id); // Show spinner for the clicked PR
     const action = shouldPin ? "pin" : "unpin";
 

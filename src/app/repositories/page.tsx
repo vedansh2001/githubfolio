@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import SelectedRepositories from "../components/SelectedRepositories/SelectedRepositories";
 import { useSearchParams } from 'next/navigation';
 import RepositoryList from "../components/SelectRepositories/SelectRepositories";
+import { useSession } from "next-auth/react";
+import FabarComponent from "../components/FabarComponent/FabarComponet";
 
 interface Repository {
   id: number;
@@ -14,11 +16,13 @@ interface Repository {
 const Repositories: React.FC = () => {
   const searchParams = useSearchParams();
   const username = searchParams.get('username') || "";
+  const session = useSession();
   
   const [Repos, setRepos] = useState<Repository[]>([]);
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
   const [addedRepos, setAddedRepos] = useState<Repository[]>([]);
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);
+  const [barisopen, setBarisopen] = useState(false)
 
   useEffect(() => {
     if (username) {
@@ -64,15 +68,25 @@ const Repositories: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-200 pt-[5%] px-[10%] flex justify-between">
+    <div className="bg-gray-200">
+
+    <FabarComponent
+    setBarisopen={setBarisopen}
+    barisopen={barisopen}
+    />
+
+    <div className={`h-screen pt-[5%] px-[10%] flex ${
+      session.status === "authenticated" ? "justify-between" : "justify-center"
+    }`}>
       
       {/* Repository List Component */}
-      <RepositoryList
+      {session.status === "authenticated" && (<RepositoryList
         repos={Repos}
         addedRepos={addedRepos}
         loadingRepoId={loadingRepoId}
         handleSelectRepo={handleSelectRepo}
       />
+      )}
 
       <SelectedRepositories
         selectedRepos={selectedRepos}
@@ -80,6 +94,7 @@ const Repositories: React.FC = () => {
         setAddedRepos={setAddedRepos}
         username={username}
       />
+    </div>
     </div>
   );
 };

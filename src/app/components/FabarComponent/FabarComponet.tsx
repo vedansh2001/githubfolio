@@ -20,7 +20,7 @@ const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen
 
   const { data: session } = useSession();
 
-console.log("this is sessisin.image: ", session);
+console.log("this is sessisin--------------------------: ", session);
 
 
   const handleOnClick = () => {

@@ -7,6 +7,7 @@ import SelectPRsToAdd from "../components/SelectPRsToAdd/SelectPRsToAdd";
 import PinnedPRs from "../components/PinnedPRs/PinnedPRs";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
+import FabarComponent from "../components/FabarComponent/FabarComponet";
 
 // Define the PR type with the correct structure
 type PR = {
@@ -31,9 +32,9 @@ const Pullrequest = () => {
   // const username = "vedansh2001";
   const [userId, setUserId] = useState<number>(0);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+  const [barisopen, setBarisopen] = useState(false)
 
   const session = useSession();
-  console.log(" ajsfddaskld jwe9q rfjewo jdsa fwoe4o kfaj 03 j----------------------", session);
   
   
   const searchParams = useSearchParams();
@@ -53,7 +54,14 @@ const Pullrequest = () => {
   };
 
   return (
-      <div className="h-screen bg-gray-200">
+    <div className="bg-gray-200">
+      
+      <FabarComponent
+      setBarisopen={setBarisopen}
+      barisopen={barisopen}
+      />
+      
+      <div className="h-screen">
         {/* pinned section present on the top */}
         <PinnedPRs 
           isPinnedToShowInPinnedSection={isPinnedToShowInPinnedSection}
@@ -100,6 +108,7 @@ const Pullrequest = () => {
           />
         )}
       </div>
+    </div>
   );
 };
 

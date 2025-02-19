@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
 
@@ -26,8 +27,13 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
 }) => {
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null); // For deleting
   const [pinLoadingRepoId, setPinLoadingRepoId] = useState<number | null>(null); // For pinning/unpinning
+  const session = useSession();
 
   const handleRemoveRepo = (id: number) => {
+    if(session.status !== "authenticated"){
+      alert("You are not authorized to make changes");
+      return;
+    }
 
     setLoadingRepoId(id);
     const fetchdata = async (id: number) => {
@@ -58,6 +64,11 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
   };
 
   const togglePin = async (id: number, isPinned: boolean) => {
+    if(session.status !== "authenticated"){
+      alert("You are not authorized to make changes");
+      return;
+    }
+
     setPinLoadingRepoId(id);
 
     const action = isPinned ? "unpin" : "pin";
