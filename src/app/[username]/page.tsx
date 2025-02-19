@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoLocation } from "react-icons/io5";
-// import { RiArrowDropDownLine, RiArrowDropUpLine, RiGitRepositoryFill, RiUserFollowFill } from "react-icons/ri";
+import { RiGitRepositoryFill, RiUserFollowFill } from "react-icons/ri";
 import { LuDot } from "react-icons/lu";
 import FabarComponent from "../components/FabarComponent/FabarComponet";
 import PinnedPRs from "../components/PinnedPRs/PinnedPRs";
