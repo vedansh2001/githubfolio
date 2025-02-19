@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoLocation } from "react-icons/io5";
-import { RiGitRepositoryFill, RiUserFollowFill } from "react-icons/ri";
+// import { RiArrowDropDownLine, RiArrowDropUpLine, RiGitRepositoryFill, RiUserFollowFill } from "react-icons/ri";
 import { LuDot } from "react-icons/lu";
 import FabarComponent from "../components/FabarComponent/FabarComponet";
 import PinnedPRs from "../components/PinnedPRs/PinnedPRs";
 import PinnedRepos from "../components/PinnedRepos/PinnedRepos";
 import SocialIcons from "../components/SocialIcons/SocialIcons";
+import { FaAt } from "react-icons/fa";
 
 interface UserPageProps {
     params: { username: string };
@@ -57,6 +58,8 @@ export default function Home({ params }: UserPageProps) {
   const [barisopen, setBarisopen] = useState(false)
   const [userId, setUserId] = useState<number>(0);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+  // const [expanded, setExpanded] = useState(false);
+  // const maxChars = 80;
 
   
   useEffect(() => {
@@ -118,49 +121,68 @@ export default function Home({ params }: UserPageProps) {
 
 
 
-        <div className="flex gap-4 mb-5 border-dashed border-gray-700 border-2 p-4">
-    <div className="flex items-center justify-center">
-      {userdata.imageURL ? (
-        <Image
-          src={userdata.imageURL}
-          alt="GitHub Avatar"
-          className="rounded-full"
-          width={110}
-          height={110}
-          priority
-        />
-      ) : (
-        <div
-          className="rounded-full bg-gray-400"
-          style={{ width: 110, height: 110 }}
-        />
-      )}
-    </div>
+      <div className="mb-3 border-dashed border-gray-700 border-2 p-3">
+        <div className="flex gap-4 mb-2" >
+        <div className="flex items-center justify-center w-[25%]">
+          {userdata.imageURL ? (
+            <Image
+              src={userdata.imageURL}
+              alt="GitHub Avatar"
+              className="rounded-full"
+              width={110}
+              height={110}
+              priority
+            />
+          ) : (
+            <div
+              className="rounded-full bg-gray-400"
+              style={{ width: 110, height: 110 }}
+            />
+          )}
+        </div>
 
 
-    <div>
-      <div className="flex justify-start items-center font-semibold text-2xl ml-1">
-        {userdata.name || "Anonymous"}
+        <div className="w-[75%]" >
+          <div className="flex justify-start items-center font-semibold text-2xl ml-1">
+            {userdata.name || "Anonymous"}
+          </div>
+          <div className="flex justify-start items-center font-semibold ml-1 text-md text-gray-500">
+          <FaAt/> <span>{userdata.githubUsername}</span>
+          </div>
+
+          <div className="flex justify-start items-center text-md">
+            <IoLocation className="mr-1" />
+            {userdata.location || "Location not specified"}
+          </div>
+          <div className="flex items-center text-md">
+            <RiUserFollowFill className="mr-1" />
+            {userdata.followers} Followers
+            <LuDot />
+            {userdata.following} Following
+          </div>
+          <div className="flex justify-start items-center text-md">
+            <RiGitRepositoryFill className="mr-1" />
+            Public repos: {userdata.publicRepos}
+          </div>
+        </div>
+        </div>
+          <div className="flex justify-start items-center text-md ml-1 flex-wrap">
+            {/* <span className="inline">
+              {expanded
+                ? userdata.bio
+                : `${userdata.bio.substring(0, maxChars)}${userdata.bio.length > maxChars ? "..." : ""}`}
+            </span> */}
+            {/* {userdata.bio.length > maxChars && (
+              <span
+                onClick={() => setExpanded(!expanded)}
+                className="inline text-blue-500 hover:underline cursor-pointer"
+              >
+                {expanded ? <RiArrowDropUpLine className="text-3xl" /> : <RiArrowDropDownLine className="text-3xl" />}
+              </span>
+            )} */}
+             {userdata.bio}
+          </div>
       </div>
-      <div className="flex justify-start items-center text-md ml-1">
-        {userdata.bio || "No bio available"}
-      </div>
-      <div className="flex justify-start items-center text-md">
-        <IoLocation className="mr-1" />
-        {userdata.location || "Location not specified"}
-      </div>
-      <div className="flex items-center text-md">
-        <RiUserFollowFill className="mr-1" />
-        {userdata.followers} Followers
-        <LuDot />
-        {userdata.following} Following
-      </div>
-      <div className="flex justify-start items-center text-md">
-        <RiGitRepositoryFill className="mr-1" />
-        Public repos: {userdata.publicRepos}
-      </div>
-    </div>
-</div>
 
 
 
@@ -201,7 +223,7 @@ export default function Home({ params }: UserPageProps) {
         <div className="border-gray-700 border-2 border-dashed ml-4">
 
 
-              <div className='h-[90%] bg-gray-300 w-[600px] pt-5' >
+              <div className='h-[90%] bg-gray-300 w-[600px] pt-5 pb-3' >
 
                  
                  {userId !== 0 && <PinnedPRs 

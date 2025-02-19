@@ -36,8 +36,6 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
         await fetch(`/api/ispinned?Id=${id}&action=unpin`, {
           method: "PUT",
         });
-        //remove repo from selected repos.
-        // const url = `/api/removerepository?Id=${encodeURIComponent(id)}`;
         
         const url = `/api/removerepository?Id=${encodeURIComponent(id)}&username=${username}`;
         const res = await fetch(url, { method: "PUT" });

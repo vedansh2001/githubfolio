@@ -90,7 +90,7 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   };
 
   return (
-    <div>
+    <div className="mt-6" >
       {Array.isArray(listOfSelectedPRs) &&
         listOfSelectedPRs.map((item) => (
           <div

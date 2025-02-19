@@ -6,6 +6,7 @@ import ShowcaseSelectedPR from "../components/ShowcaseSelectedPR/ShowcaseSelecte
 import SelectPRsToAdd from "../components/SelectPRsToAdd/SelectPRsToAdd";
 import PinnedPRs from "../components/PinnedPRs/PinnedPRs";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 // Define the PR type with the correct structure
 type PR = {
@@ -30,6 +31,10 @@ const Pullrequest = () => {
   // const username = "vedansh2001";
   const [userId, setUserId] = useState<number>(0);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+
+  const session = useSession();
+  console.log(" ajsfddaskld jwe9q rfjewo jdsa fwoe4o kfaj 03 j----------------------", session);
+  
   
   const searchParams = useSearchParams();
   const username = searchParams.get('username') || "";
@@ -42,16 +47,6 @@ const Pullrequest = () => {
     }
   }, [searchParams]);
   
-  
-  // console.log("@#$%^&*(*&^%$#$%^&*&^%$::::::::::::::::::::::-------------", username, "and this userId", userId);
-
-
-  // useEffect(() => {
-  //   const params = new URLSearchParams(window.location.search);
-  //   const data = params.get('data');
-  //   setUserId(Number(data));
-  // }, []);
-
 
   const handleOpenAddPRBox = () => {
     setSelectPRBoxIsOpen(!selectPRBoxIsOpen);
@@ -67,14 +62,18 @@ const Pullrequest = () => {
         />
 
         {/* button to add select PR to be added */}
-        <div className="w-[80%] ml-[10%] my-6 flex justify-end">
-          <button
-            className="bg-green-500 border-2 border-black rounded-sm px-3 py-1"
-            onClick={handleOpenAddPRBox}
-          >
-            Add PR +
-          </button>
-        </div>
+        {/* Show button only if user session exists */}
+        {session.status === "authenticated" && (
+      <div className="w-[80%] ml-[10%] mb-6 flex justify-end">
+        <button
+          className="bg-green-500 border-2 border-black rounded-sm px-3 py-1"
+          onClick={handleOpenAddPRBox}
+        >
+          Add PR +
+        </button>
+      </div>
+    )}
+
 
         {/* code of the selected PRs that will be displayed after being selected */}
         <ShowcaseSelectedPR

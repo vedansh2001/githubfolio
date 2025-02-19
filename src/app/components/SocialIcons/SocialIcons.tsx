@@ -8,10 +8,11 @@ const SocialIcons = () => {
   const [showCopied, setShowCopied] = useState(false);
 
   const url = typeof window !== "undefined" ? window.location.href : "";
-  const text = "Check out this amazing website!"; // Replace with your text
+  const text = "Check out My Github Portfolio!";
 
   const handleCopyLink = () => {
     setShowCopied(true); // Explicitly set to true
+    navigator.clipboard.writeText(url);
     setTimeout(() => {
       setShowCopied(false); // Explicitly set to false after 3 seconds
     }, 2000);
@@ -49,16 +50,6 @@ const SocialIcons = () => {
                   >
                     <FaFacebook />
               </button>
-              {/* <button
-                    className="text-gray-700 text-4xl"
-                    onClick={() => {
-                      navigator.clipboard.writeText(url);
-                      alert("Link copied to clipboard!");
-                    }}
-                    aria-label="Copy Link"
-                  >
-                    <FaLink />
-              </button> */}
               <div className="relative group">
               <button
                     className="text-gray-700 text-4xl"
