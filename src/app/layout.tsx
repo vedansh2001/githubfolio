@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner"
 import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
@@ -33,7 +32,6 @@ export default function RootLayout({
         <SessionProvider>
         {children}
         </SessionProvider>
-        <Toaster />
       </body>
     </html>
   );

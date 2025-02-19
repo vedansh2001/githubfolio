@@ -112,8 +112,8 @@ console.log("this is sessisin.image: ", session);
                     </span>
                   </div>
                 ) : (
-                  <div className="relative group flex items-center gap-2">
-                    <span>{session.user.name}</span>
+                  <div className="relative flex items-center gap-2">
+                    <span className="ml-2 font-semibold">{session.user.name}</span>
                     {session.user.image && (
                       <Image
                         src={session.user.image}
@@ -123,18 +123,19 @@ console.log("this is sessisin.image: ", session);
                         className="rounded-full"
                       />
                     )}
+                    
                     <button
                       onClick={() => signOut({ callbackUrl: "/login" })}
-                      className="flex items-center"
+                      className="relative group flex items-center"
                     >
                       <MdLogout className="text-5xl pl-3 cursor-pointer" />
+                      
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 ease-in-out bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
+                        Logout
+                      </span>
                     </button>
-
-
-                    <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                      Logout
-                    </span>
                   </div>
+
                 )}
         </div>
       </div>
