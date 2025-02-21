@@ -59,6 +59,7 @@ const Pullrequest = () => {
       <FabarComponent
       setBarisopen={setBarisopen}
       barisopen={barisopen}
+      userId={43}
       />
       
       <div className="h-screen">
@@ -72,9 +73,9 @@ const Pullrequest = () => {
         {/* button to add select PR to be added */}
         {/* Show button only if user session exists */}
         {session.status === "authenticated" && (
-      <div className="w-[80%] ml-[10%] mb-6 flex justify-end">
+      <div className="w-[80%] ml-[10%] mb-6 mt-2 flex justify-end">
         <button
-          className="bg-green-500 border-2 border-black rounded-sm px-3 py-1"
+          className="bg-gradient-to-r from-green-500 to-green-600 border-2 border-black text-white font-semibold rounded-md px-4 py-[6px] shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
           onClick={handleOpenAddPRBox}
         >
           Add PR +

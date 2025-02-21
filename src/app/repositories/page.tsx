@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import SelectedRepositories from "../components/SelectedRepositories/SelectedRepositories";
 import { useSearchParams } from 'next/navigation';
-import RepositoryList from "../components/SelectRepositories/SelectRepositories";
+import SelectRepositories from "../components/SelectRepositories/SelectRepositories";
 import { useSession } from "next-auth/react";
 import FabarComponent from "../components/FabarComponent/FabarComponet";
 
@@ -11,6 +11,7 @@ interface Repository {
   id: number;
   name: string;
   isPinned?: boolean; 
+  link: string;
 }
 
 const Repositories: React.FC = () => {
@@ -73,14 +74,15 @@ const Repositories: React.FC = () => {
     <FabarComponent
     setBarisopen={setBarisopen}
     barisopen={barisopen}
+    userId={43}
     />
 
-    <div className={`h-screen pt-[5%] px-[10%] flex ${
+    <div className={`h-screen pt-[3%] px-[10%] flex ${
       session.status === "authenticated" ? "justify-between" : "justify-center"
     }`}>
       
       {/* Repository List Component */}
-      {session.status === "authenticated" && (<RepositoryList
+      {session.status === "authenticated" && (<SelectRepositories
         repos={Repos}
         addedRepos={addedRepos}
         loadingRepoId={loadingRepoId}

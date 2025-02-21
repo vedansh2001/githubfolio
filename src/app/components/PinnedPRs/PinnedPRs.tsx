@@ -58,23 +58,23 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({
 
   return (
     <div className="h-[38%] bg-gray-300">
-      <p className="ml-[10%] pb-1 flex items-center gap-1">
-        <PiPushPinSlashFill />
+      <p className="ml-[10%] pb-1 flex items-center gap-1 font-semibold">
+      <PiPushPinSlashFill className="text-gray-600" />
         Pinned PRs
       </p>
-      <div className="w-[80%] ml-[10%] bg-gray-300 h-[80%] border-2 p-4 border-black rounded-sm grid grid-cols-2 gap-4">
+      <div className="w-[80%] ml-[10%] bg-gray-300 h-[80%] border-2 p-4 border-black shadow-md rounded-sm grid grid-cols-2 gap-4">
       {isPinnedToShowInPinnedSection?.length > 0 ? (
         isPinnedToShowInPinnedSection.map((item) => (
           <div
           key={item.id}
           className="border-2 border-gray-700 p-2 flex items-center justify-between cursor-pointer truncate"
           >
-          <div className="bg-gray-300 truncate max-w-[90%]" >
+          <div className="bg-gray-300 truncate max-w-[90%] text-gray-600 hover:opacity-70 hover:scale-110 transition duration-300" >
             {item.name}
           </div>
            <div>
              <Link href={item.link}>
-               <FaExternalLinkAlt className="hover:text-blue-500" />
+               <FaExternalLinkAlt className="text-blue-600 hover:opacity-70 hover:scale-125 transition duration-200" />
              </Link>
            </div>
            </div>

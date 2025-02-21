@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
-import { FaExternalLinkAlt, FaSpinner } from "react-icons/fa"; // Spinner icon for loading
+import { FaExternalLinkAlt, FaSpinner } from "react-icons/fa";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
 
 type PR = {
-  createdAt: string; // ISO Date format
+  createdAt: string;
   description: string | null;
   full_name: string;
   id: number;
@@ -18,30 +18,26 @@ type PR = {
   userId: number;
 };
 
-// interface usernameprop {
-//   username: string;
-// }
 type ShowcaseSelectedPRProps = {
-  setListofSelectedPRs: React.Dispatch<React.SetStateAction<PR[]>>; // State setter for PR array
-  listOfSelectedPRs: PR[]; // Array of PR objects
-  repositoryLink: string; // Repository link
-  repo_fullName: string; // Repository full name
-  userId: number; // User ID
+  setListofSelectedPRs: React.Dispatch<React.SetStateAction<PR[]>>;
+  listOfSelectedPRs: PR[];
+  repositoryLink: string;
+  repo_fullName: string;
+  userId: number;
   setIsPinnedToShowInPinnedSection: React.Dispatch<React.SetStateAction<PR[]>>;
-  username:string;
+  username: string;
 };
 
 const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   setListofSelectedPRs,
-  listOfSelectedPRs = [], // Default to an empty array if undefined or null
+  listOfSelectedPRs = [],
   repositoryLink,
-  // repo_fullName,
   userId,
   setIsPinnedToShowInPinnedSection,
   username,
 }) => {
-  const [loadingPR, setLoadingPR] = useState<number | null>(null); // PR ID being pinned/unpinned
-  const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null); // Tracks which PR's description is open
+  const [loadingPR, setLoadingPR] = useState<number | null>(null);
+  const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null);
   const session = useSession();
 
   useEffect(() => {
@@ -51,7 +47,7 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
           const res = await fetch(`/api/fetchSelectedPRs?userId=${encodeURIComponent(userId)}`);
           if (!res.ok) throw new Error(`Error: ${res.status}`);
           const data = await res.json();
-          setListofSelectedPRs(data.selectedPRs); // Update state with fetched PRs
+          setListofSelectedPRs(data.selectedPRs);
         } catch (error) {
           console.error("Error fetching repositories:", error);
         }
@@ -61,11 +57,11 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   }, [userId, setListofSelectedPRs]);
 
   const handlePinUnpin = async (id: number, shouldPin: boolean) => {
-    if(session.status !== "authenticated"){
+    if (session.status !== "authenticated") {
       alert("You are not authorized to make changes.");
       return;
     }
-    setLoadingPR(id); // Show spinner for the clicked PR
+    setLoadingPR(id);
     const action = shouldPin ? "pin" : "unpin";
 
     try {
@@ -96,56 +92,61 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
   };
 
   return (
-    <div className="mt-6" >
+    <div className="mt-6 flex flex-col items-center">
       {Array.isArray(listOfSelectedPRs) &&
         listOfSelectedPRs.map((item) => (
           <div
-            className="w-[70%] h-[60px] ml-[15%] border-2 mb-4 border-black rounded-sm flex justify-between items-center px-4 bg-gray-300"
             key={item.id}
+            className="w-[70%] bg-gray-300 border border-gray-800 shadow-md rounded-lg mb-4 p-4 transition-all hover:shadow-lg"
           >
-            <div>
-              <p className="text-sm text-sky-600">
-                <a href={repositoryLink}>{item.full_name}</a>
-              </p>
-              <p>
-                {item.name} {/* Name of PR */}
-              </p>
-            </div>
-            <div>
-              <div className="flex gap-5 items-center">
-                <div>Status: {item.state}</div>
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm text-blue-600 font-semibold">
+                  <a href={repositoryLink} target="_blank" rel="noopener noreferrer">{item.full_name}</a>
+                </p>
+                <p className="font-medium text-lg">{item.name}</p>
+              </div>
+
+              <div className="flex gap-4 items-center">
+                <span className="text-gray-600 text-sm">Status: {item.state}</span>
+
+                {/* Pin/Unpin Icon */}
                 {loadingPR === item.id ? (
-                  <FaSpinner className="animate-spin text-gray-500" />
+                  <FaSpinner className="animate-spin text-gray-500 text-lg" />
                 ) : item.isPinned ? (
                   <RxDrawingPinFilled
-                    className="cursor-pointer text-black"
+                    className="cursor-pointer text-green-600 text-xl hover:text-green-800 transition"
                     onClick={() => handlePinUnpin(item.id, false)}
                   />
                 ) : (
                   <RxDrawingPin
-                    className="cursor-pointer text-black"
+                    className="cursor-pointer text-gray-600 text-xl hover:text-black transition"
                     onClick={() => handlePinUnpin(item.id, true)}
                   />
                 )}
-                
-                <a className="text-sky-600 ml-2" href={item.link}>
-                  <FaExternalLinkAlt/>
+
+                {/* External Link */}
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition">
+                  <FaExternalLinkAlt />
                 </a>
-              </div>
-              <div className="flex justify-end -mr-2">
-                <div
-                  className=" bg-[#C4C4C4] rounded-full flex justify-end"
+
+                {/* Toggle Description */}
+                <button
                   onClick={() => toggleDescription(item.id)}
+                  className="bg-gray-400 rounded-full p-1 hover:bg-gray-500 transition"
                 >
-                  <RiArrowDropDownLine className="text-3xl" />
-                </div>
+                  <RiArrowDropDownLine className="text-2xl text-gray-700" />
+                </button>
+              </div>
+            </div>
+
+            {/* Description Section */}
             {openDescriptionId === item.id && (
-              <div className="h-[150px] w-[70%] -mx-[10px] p-4 absolute bg-gray-300 mt-[40px]">
+              <div className="mt-3 p-3 bg-gray-100 border-l-4 border-blue-500 rounded-lg transition-all">
                 {item.description || "No description available"}
               </div>
             )}
-              </div>
-            </div>
           </div>
         ))}
     </div>

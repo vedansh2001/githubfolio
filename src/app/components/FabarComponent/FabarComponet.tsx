@@ -12,9 +12,10 @@ import Image from "next/image";
 interface FabarComponentProps {
   barisopen: boolean;
   setBarisopen: React.Dispatch<React.SetStateAction<boolean>>;
+  userId: number
 }
 
-const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen }) => {
+const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen, userId }) => {
   // const session = await auth();
   const boxRef = useRef<HTMLDivElement | null>(null);
 
@@ -66,11 +67,15 @@ console.log("this is sessisin--------------------------: ", session);
 
           <div className="w-[100%] pb-4">
             <div className="bg-gray-300 px-3 shadow shadow-gray-500 py-1 text-xl font-semi-bold">
-              <Link href="../pullrequests"> Edit PRs</Link>
+              <Link 
+              href={`/pullrequests?username=${session?.user.githubUsername}&userId=${userId}`}
+              > Edit PRs</Link>
             </div>
 
             <div className="bg-gray-300 px-3 shadow shadow-gray-500 py-1 text-xl font-semi-bold">
-              <Link href="../repositories"> Edit Repos</Link>
+              <Link 
+              href={`/repositories?username=${session?.user.githubUsername}`}
+              > Edit Repos</Link>
             </div>
           </div>
         </div>

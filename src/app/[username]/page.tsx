@@ -113,105 +113,109 @@ export default function Home({ params }: UserPageProps) {
   return (
     <div className=" h-screen bg-gray-300" >
 
-      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen}  />
+      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen} userId={userId}  />
 
 
-      <div className="h-[90%] bg-gray-300 flex justify-between w-[80%] p-4 mx-[10%] border-2 border-dashed border-black" >
+      <div className="h-[92%] bg-gray-300 flex justify-between w-[80%] p-4 py-2 mx-[10%] border-2 border-dashed border-black" >
         <div className="bg-gray-300 ">
 
 
 
-      <div className="mb-3 border-dashed border-gray-700 border-2 p-3">
-        <div className="flex gap-4 mb-2" >
-        <div className="flex items-center justify-center w-[25%]">
-          {userdata.imageURL ? (
-            <Image
-              src={userdata.imageURL}
-              alt="GitHub Avatar"
-              className="rounded-full"
-              width={110}
-              height={110}
-              priority
-            />
-          ) : (
-            <div
-              className="rounded-full bg-gray-400"
-              style={{ width: 110, height: 110 }}
-            />
-          )}
+        <div className="bg-gray-300 shadow-md rounded-sm border border-1 border-black p-5 py-3 mb-2 w-[100%] mx-auto">
+            <div className="flex gap-6 mb-3">
+              {/* Profile Image */}
+              <div className="flex items-center justify-center w-[25%]">
+                {userdata.imageURL ? (
+                  <div className="border border-black rounded-full" >
+                  <Image
+                    src={userdata.imageURL}
+                    alt="GitHub Avatar"
+                    className="border-[3px] rounded-full border-gray-400 shadow-md"
+                    width={110}
+                    height={110}
+                    priority
+                  />
+                  </div>
+                ) : (
+                  <div className="rounded-full bg-gray-400 w-[110px] h-[110px] border border-gray-300" />
+                )}
+              </div>
+
+              {/* User Details */}
+              <div className="w-[75%] font-semibold text-gray-800">
+                {/* Name */}
+                <div className="text-2xl font-bold">{userdata.name || "Anonymous"}</div>
+
+                {/* GitHub Username */}
+                <div className="flex items-center text-md text-gray-600">
+                  <FaAt className="text-gray-500" />
+                  <span>{userdata.githubUsername}</span>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center text-md text-gray-700">
+                  <div className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 mr-2">
+                    <IoLocation className="text-black"/>
+                  </div>
+                  {userdata.location || "Location not specified"}
+                </div>
+
+                {/* Followers & Following */}
+                <div className="flex items-center text-md text-gray-700">
+                  <div className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 mr-2">
+                    <RiUserFollowFill className="text-black" />
+                  </div>
+                  {userdata.followers} Followers
+                  <LuDot className="text-gray-500 mx-2" />
+                  {userdata.following} Following
+                </div>
+
+                {/* Public Repositories */}
+                <div className="flex items-center text-md text-gray-700">
+                  <div className="w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 mr-2">
+                    <RiGitRepositoryFill className="text-black" />
+                  </div>
+                  Public repos: {userdata.publicRepos}
+                </div>
+
+              </div>
+            </div>
+
+            {/* Bio Section */}
+            <div className="text-gray-700 leading-relaxed ">
+              {userdata.bio}
+            </div>
         </div>
 
 
-        <div className="w-[75%]" >
-          <div className="flex justify-start items-center font-semibold text-2xl ml-1">
-            {userdata.name || "Anonymous"}
-          </div>
-          <div className="flex justify-start items-center font-semibold ml-1 text-md text-gray-500">
-          <FaAt/> <span>{userdata.githubUsername}</span>
-          </div>
-
-          <div className="flex justify-start items-center text-md">
-            <IoLocation className="mr-1" />
-            {userdata.location || "Location not specified"}
-          </div>
-          <div className="flex items-center text-md">
-            <RiUserFollowFill className="mr-1" />
-            {userdata.followers} Followers
-            <LuDot />
-            {userdata.following} Following
-          </div>
-          <div className="flex justify-start items-center text-md">
-            <RiGitRepositoryFill className="mr-1" />
-            Public repos: {userdata.publicRepos}
-          </div>
-        </div>
-        </div>
-          <div className="flex justify-start items-center text-md ml-1 flex-wrap">
-            {/* <span className="inline">
-              {expanded
-                ? userdata.bio
-                : `${userdata.bio.substring(0, maxChars)}${userdata.bio.length > maxChars ? "..." : ""}`}
-            </span> */}
-            {/* {userdata.bio.length > maxChars && (
-              <span
-                onClick={() => setExpanded(!expanded)}
-                className="inline text-blue-500 hover:underline cursor-pointer"
-              >
-                {expanded ? <RiArrowDropUpLine className="text-3xl" /> : <RiArrowDropDownLine className="text-3xl" />}
-              </span>
-            )} */}
-             {userdata.bio}
-          </div>
-      </div>
 
 
 
-
-         <div className="bg-gray-300 border-dashed border-gray-700 border-2 p-3 text-xl mb-2">
+         <div className="bg-gray-300 border-gray-700 text-xl mb-2 shadow-md rounded-md">
             {/* GitHub Stats Graph */}
             {username && (
               <Image
-                src={`https://github-readme-stats.vercel.app/api?username=${username}&hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false&border_color=000000&text_color=000000&bg_color=D1D5DB&icon_color=000000&hide=contribs`}
+                src={`https://github-readme-stats.vercel.app/api?username=${username}&custom_title=${encodeURIComponent("My GitHub Stats")}&title_color=4B5563&hide_title=false&rank_icon=github&show_icons=true&include_all_commits=true&count_private=true&disable_animations=false&theme=dracula&locale=en&hide_border=false&border_color=000000&border_width=2&text_color=000000&bg_color=D1D5DB&ring_color=16A34A&icon_color=000000&hide=contribs`}
                 height={150}
                 width={500}
-                className="mb-1"
+                className="mb-2"
                 alt="Stats Graph"
                 unoptimized
                 priority
               />
             )}
 
+
             {/* GitHub Languages Graph */}
-            {username && (
-              <Image
-                src={`https://github-readme-stats.vercel.app/api/top-langs?username=${username}&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&border_color=000000&text_color=000000&bg_color=D1D5DB&icon_color=000000`}
-                height={150}
-                width={500}
-                alt="Languages Graph"
-                unoptimized
-                priority
-              />
-            )}
+            <Image
+              src={`https://github-readme-stats.vercel.app/api/top-langs?username=${username}&title_color=4B5563&bar_color=16A34A&locale=en&hide_title=false&layout=compact&card_width=320&langs_count=5&theme=dracula&hide_border=false&border_color=000000&text_color=000000&bg_color=D1D5DB&icon_color=000000`}
+              height={150}
+              width={500}
+              alt="Languages Graph"
+              unoptimized
+              priority
+            />
+
           </div>
 
 
@@ -223,7 +227,7 @@ export default function Home({ params }: UserPageProps) {
         <div className="border-gray-700 border-2 border-dashed ml-4">
 
 
-              <div className='h-[90%] bg-gray-300 w-[600px] pt-5 pb-3' >
+              <div className='h-[90%] bg-gray-300 w-[600px] pt-5 pb-6' >
 
                  
                  {userId !== 0 && <PinnedPRs 
@@ -233,22 +237,22 @@ export default function Home({ params }: UserPageProps) {
                  />}
 
 
-                  <div className='w-[80%] ml-[10%] flex -mt-2 justify-end'>
-                    <Link 
-                      className='bg-green-500 border-2 border-black rounded-sm px-3 py-1'
-                    //   href={{ pathname: "/pullrequests", query: { data: username } }}
+                <div className="w-[80%] ml-[10%] flex -mt-2 justify-end">
+                  <Link 
+                    className="bg-gradient-to-r from-green-500 to-green-600 border-2 border-black text-white font-semibold rounded-md px-4 py-[6px] shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
                     href={`/pullrequests?username=${username}&userId=${userId}`}
-                    >
-                      More
-                    </Link>
-                  </div>
+                  >
+                    More
+                  </Link>
+                </div>
+
 
 
                  <PinnedRepos username={username}/>
 
                   <div className='w-[80%] ml-[10%] flex justify-end -mt-2'>
                   <Link
-                    className='bg-green-500 border-2 border-black rounded-sm px-3 py-1'
+                    className="bg-gradient-to-r from-green-500 to-green-600 border-2 border-black text-white font-semibold rounded-md px-4 py-[6px] shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
                     href={`/repositories?username=${username}`}
                     >
                     More
