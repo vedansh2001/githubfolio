@@ -74,36 +74,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     
                 // 🔹 If the user doesn't exist, create a new entry
                 if (!existingUser) {
-                    // existingUser = await prisma.user.create({
-                    //     data: {
-                    //         githubUsername,
-                    //         email: email || "",  // Store email if available, otherwise empty string
-                    //         password: "",  // GitHub users don't need passwords
-                    //     }
-                    // });
-              //       existingUser = await fetch("api/user",{ 
-              //         method: "POST",
-              //         headers: {
-              //             "Content-Type": "application/json"
-              //         },
-              //         body: JSON.stringify({githubProfile?.name, githubUsername, githubProfile?.email?})
-              // });
               const url = process.env.WEBSITE_URL;
-              // const url = "http://localhost:3000/";
               console.log("this is the url------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- :", url);
               
                await fetch(`${url}/api/user`, { 
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify({  
-                  name: profile?.name,  // ✅ Fixed JSON formatting
-                  githubUsername: githubUsername,
-                  email: profile?.email || "not_provided", // ✅ Fallback if email is missing
-                  password: null,
-                }),
-              });
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify({  
+                    name: profile?.name,  // ✅ Fixed JSON formatting
+                    githubUsername: githubUsername,
+                    email: profile?.email || "not_provided", // ✅ Fallback if email is missing
+                    password: null,
+                  }),
+                });
               
                 } else if (!existingUser.githubUsername) {
                     // If user exists but doesn't have a GitHub username, update it

@@ -86,6 +86,16 @@ export default function Signup() {
                                                 body: JSON.stringify({name, password, githubUsername, email})
                                         });
                                         const data = await response.json()
+                                        if (response.ok) {
+                                          // ✅ Auto login after successful signup
+                                          await signIn("credentials", {
+                                            email,
+                                            password,
+                                            redirect: true, // Redirect to dashboard or home
+                                          });
+                                        } else {
+                                          console.error("Signup failed:", data.message);
+                                        }
                                         
 
                                         if (!response.ok) {
