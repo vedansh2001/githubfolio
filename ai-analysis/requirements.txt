@@ -1,0 +1,11 @@
+# For Google Gemini API
+google-generativeai
+requests
+python-dotenv
+
+# For FastAPI server
+fastapi
+uvicorn
+
+# Optional but recommended (for handling CORS)
+python-multipart
