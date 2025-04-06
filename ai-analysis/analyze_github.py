@@ -39,6 +39,8 @@ Analyze this GitHub user's repositories as an expert code reviewer. Provide a co
   ]
 }}
 
+Return ONLY valid JSON without any text before or after. Do not include markdown code block formatting.
+
 Evaluate based on these criteria:
 - Code Quality: Structure, readability, best practices, patterns, efficiency, test coverage, error handling
 - Security: Authentication handling, input validation, vulnerability prevention, dependency management, secrets handling
@@ -60,30 +62,74 @@ Code:
 """
 
 def analyze_user(username: str):
-    print(f"Analyzing GitHub user: {username}")
-    repos = get_repositories(username)
-    top_repos = select_top_repositories(repos)
-    combined_code = download_and_combine_code(username, top_repos)
-
-    prompt = generate_prompt(combined_code)
-
-    print("Sending code to Gemini...")
-    response = model.generate_content(prompt, generation_config={"temperature": 0.3})
-
     try:
-        response_text = response.text.strip()
-        if response_text.startswith("```json"):
-            response_text = response_text.replace("```json", "").replace("```", "").strip()
+        repos = get_repositories(username)
+        top_repos = select_top_repositories(repos)
+        combined_code = download_and_combine_code(username, top_repos)
 
-        print("Cleaned Gemini response:", response_text)
-        analysis_json = json.loads(response_text)
-        return analysis_json
+        prompt = generate_prompt(combined_code)
+
+        # Request JSON response format
+        response = model.generate_content(
+            prompt, 
+            generation_config={
+                "temperature": 0.3,
+                "response_mime_type": "application/json"
+            }
+        )
+
+        # Try multiple approaches to extract JSON
+        try:
+            # Try to parse the response directly
+            if hasattr(response, 'text'):
+                response_text = response.text.strip()
+                
+                # Remove any markdown formatting
+                if response_text.startswith("```json"):
+                    response_text = response_text.replace("```json", "").replace("```", "").strip()
+                elif response_text.startswith("```"):
+                    response_text = response_text.replace("```", "").strip()
+                
+                # Handle potential JSON formatting issues
+                if response_text.startswith("{") and response_text.endswith("}"):
+                    analysis_json = json.loads(response_text)
+                    return analysis_json
+            
+            # Try to extract from parts if available
+            if hasattr(response, 'parts') and response.parts:
+                for part in response.parts:
+                    if hasattr(part, 'text') and part.text:
+                        clean_text = part.text.strip()
+                        if "```json" in clean_text:
+                            start = clean_text.find("```json") + 7
+                            end = clean_text.rfind("```")
+                            if end > start:
+                                clean_text = clean_text[start:end].strip()
+                        elif "```" in clean_text:
+                            start = clean_text.find("```") + 3
+                            end = clean_text.rfind("```")
+                            if end > start:
+                                clean_text = clean_text[start:end].strip()
+                        
+                        try:
+                            return json.loads(clean_text)
+                        except:
+                            continue
+            
+            # Last resort, try to find anything that looks like JSON
+            full_text = response.text
+            if "{" in full_text and "}" in full_text:
+                json_start = full_text.find("{")
+                json_end = full_text.rfind("}") + 1
+                json_text = full_text[json_start:json_end]
+                return json.loads(json_text)
+                
+            raise Exception("Could not extract valid JSON from response")
+            
+        except Exception as e:
+            return {"error": f"Failed to parse Gemini response: {str(e)}"}
     except Exception as e:
-        print("Error parsing Gemini response:", e)
-        return {"error": "Failed to parse Gemini response"}
-
-
-
+        return {"error": f"Error in analysis process: {str(e)}"}
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
