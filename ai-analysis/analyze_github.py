@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import re
 from dotenv import load_dotenv
 from github_utils import get_repositories, select_top_repositories, download_and_combine_code
 import google.generativeai as genai
@@ -39,7 +40,7 @@ Analyze this GitHub user's repositories as an expert code reviewer. Provide a co
   ]
 }}
 
-Return ONLY valid JSON without any text before or after. Do not include markdown code block formatting.
+CRITICAL: Return ONLY valid JSON without any text before or after. Do not include markdown code block formatting, comments, or placeholders. JSON does not support comments like '// ...' or '/* ... */', so do not include any comments in your response.
 
 Evaluate based on these criteria:
 - Code Quality: Structure, readability, best practices, patterns, efficiency, test coverage, error handling
@@ -61,7 +62,50 @@ Code:
 {code_blob[:950000]}  # keep under 1M token limit
 """
 
+def remove_comments(json_string):
+    """Remove both single-line and multi-line comments from JSON string."""
+    # Remove single-line comments (// ...)
+    json_string = re.sub(r'//.*?(\n|$)', '', json_string)
+    # Remove multi-line comments (/* ... */)
+    json_string = re.sub(r'/\*[\s\S]*?\*/', '', json_string)
+    return json_string
+
+def extract_valid_json(text):
+    """Extract valid JSON from a text that might contain other content."""
+    # Remove markdown code blocks
+    if "```" in text:
+        text = re.sub(r'```(?:json)?\s*([\s\S]*?)\s*```', r'\1', text)
+    
+    # Remove comments that might be causing JSON parsing errors
+    text = remove_comments(text)
+    
+    # Try to find JSON object
+    try:
+        # First try direct parsing
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # If that fails, try to extract JSON from within the text
+        try:
+            # Find the outermost JSON object
+            start = text.find('{')
+            end = text.rfind('}') + 1
+            if start >= 0 and end > start:
+                extracted = text[start:end]
+                # Try parsing with comment removal
+                cleaned = remove_comments(extracted)
+                return json.loads(cleaned)
+        except json.JSONDecodeError:
+            # If still failing, try more aggressive approaches
+            try:
+                # Try manual JSON formatting fix for common issues
+                text = text.replace(",]", "]").replace(",}", "}")
+                # Try again with fixed JSON
+                return json.loads(text)
+            except json.JSONDecodeError:
+                raise Exception("Could not extract valid JSON after multiple attempts")
+
 def analyze_user(username: str):
+    print(f"Analyzing GitHub user: {username}")
     try:
         repos = get_repositories(username)
         top_repos = select_top_repositories(repos)
@@ -69,70 +113,57 @@ def analyze_user(username: str):
 
         prompt = generate_prompt(combined_code)
 
-        # Request JSON response format
+        print("Sending code to Gemini...")
+        # Request JSON response format with a stricter temperature
         response = model.generate_content(
             prompt, 
             generation_config={
-                "temperature": 0.3,
-                "response_mime_type": "application/json"
+                "temperature": 0.1,  # Lower temperature for more consistent output
+                "response_mime_type": "application/json",
+                "max_output_tokens": 8000  # Limit to avoid potential truncation
             }
         )
 
-        # Try multiple approaches to extract JSON
         try:
-            # Try to parse the response directly
+            print("Processing response...")
+            response_text = ""
+            
+            # Extract text from response
             if hasattr(response, 'text'):
                 response_text = response.text.strip()
-                
-                # Remove any markdown formatting
-                if response_text.startswith("```json"):
-                    response_text = response_text.replace("```json", "").replace("```", "").strip()
-                elif response_text.startswith("```"):
-                    response_text = response_text.replace("```", "").strip()
-                
-                # Handle potential JSON formatting issues
-                if response_text.startswith("{") and response_text.endswith("}"):
-                    analysis_json = json.loads(response_text)
-                    return analysis_json
+                print(f"Response length: {len(response_text)} bytes")
+                print(f"Response sample: {response_text[:100]}...")
+            else:
+                # Try parts if text isn't available
+                if hasattr(response, 'parts') and response.parts:
+                    for part in response.parts:
+                        if hasattr(part, 'text') and part.text:
+                            response_text += part.text
             
-            # Try to extract from parts if available
-            if hasattr(response, 'parts') and response.parts:
-                for part in response.parts:
-                    if hasattr(part, 'text') and part.text:
-                        clean_text = part.text.strip()
-                        if "```json" in clean_text:
-                            start = clean_text.find("```json") + 7
-                            end = clean_text.rfind("```")
-                            if end > start:
-                                clean_text = clean_text[start:end].strip()
-                        elif "```" in clean_text:
-                            start = clean_text.find("```") + 3
-                            end = clean_text.rfind("```")
-                            if end > start:
-                                clean_text = clean_text[start:end].strip()
-                        
-                        try:
-                            return json.loads(clean_text)
-                        except:
-                            continue
+            if not response_text:
+                print("Warning: Empty response received")
+                return {"error": "Empty response from Gemini API"}
             
-            # Last resort, try to find anything that looks like JSON
-            full_text = response.text
-            if "{" in full_text and "}" in full_text:
-                json_start = full_text.find("{")
-                json_end = full_text.rfind("}") + 1
-                json_text = full_text[json_start:json_end]
-                return json.loads(json_text)
-                
-            raise Exception("Could not extract valid JSON from response")
+            # Process the response text to extract valid JSON
+            print("Extracting JSON from response...")
+            analysis_json = extract_valid_json(response_text)
+
+            print("Success! JSON extracted successfully.")
+            return analysis_json
             
         except Exception as e:
-            return {"error": f"Failed to parse Gemini response: {str(e)}"}
+            print(f"Error parsing response: {str(e)}")
+            print(f"Dumping raw response for debugging: {response_text[:500]}")
+            return {"error": f"Failed to parse Gemini response: {str(e)}", "data": {}}
     except Exception as e:
-        return {"error": f"Error in analysis process: {str(e)}"}
+        print(f"Error in analysis process: {str(e)}")
+        return {"error": f"Error analyzing GitHub user: {str(e)}", "data": {}}
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python analyze_github.py <github_username>")
     else:
-        analyze_user(sys.argv[1])
+        result = analyze_user(sys.argv[1])
+        if "error" not in result:
+            print("Analysis completed successfully!")
+        print(json.dumps(result, indent=2))
