@@ -59,7 +59,6 @@ const Pullrequest = () => {
       <FabarComponent
       setBarisopen={setBarisopen}
       barisopen={barisopen}
-      userId={43}
       />
       
       <div className="h-screen">

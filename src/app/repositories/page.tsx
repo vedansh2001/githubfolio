@@ -74,7 +74,6 @@ const Repositories: React.FC = () => {
     <FabarComponent
     setBarisopen={setBarisopen}
     barisopen={barisopen}
-    userId={43}
     />
 
     <div className={`h-screen pt-[3%] px-[10%] flex ${
