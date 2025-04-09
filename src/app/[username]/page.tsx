@@ -113,7 +113,7 @@ export default function Home({ params }: UserPageProps) {
   return (
     <div className=" h-screen bg-gray-300" >
 
-      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen} userId={userId}  />
+      <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen}  />
 
 
       <div className="h-[92%] bg-gray-300 flex justify-between w-[80%] p-4 py-2 mx-[10%] border-2 border-dashed border-black" >
