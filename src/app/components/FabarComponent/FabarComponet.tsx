@@ -4,25 +4,21 @@ import { FaBars } from "react-icons/fa";
 import { MdLogin, MdLogout } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import { signOut, useSession } from "next-auth/react";
-// import { auth } from "../../auth";
 import Image from "next/image";
-// import Logout from "../Logout/Logout";
-// import SignIn from "../LoginGithub/loginGithub";
+import { useRouter } from "next/navigation";
 
 interface FabarComponentProps {
   barisopen: boolean;
   setBarisopen: React.Dispatch<React.SetStateAction<boolean>>;
-  userId: number
 }
 
-const FabarComponent: React.FC<FabarComponentProps> = ({ barisopen, setBarisopen, userId }) => {
-  // const session = await auth();
+const FabarComponent: React.FC<FabarComponentProps> = ({
+  barisopen,
+  setBarisopen,
+}) => {
   const boxRef = useRef<HTMLDivElement | null>(null);
-
   const { data: session } = useSession();
-
-console.log("this is sessisin--------------------------: ", session);
-
+  const router = useRouter();
 
   const handleOnClick = () => {
     setBarisopen(false);
@@ -36,6 +32,25 @@ console.log("this is sessisin--------------------------: ", session);
     },
     [setBarisopen]
   );
+  const handleHomePage = () => {
+    router.push("/");
+  }
+  const handleViewMyPortfolio = () => {
+    if (session?.user?.githubUsername) {
+      router.push(`/${session.user.githubUsername}`);
+    } else {
+      // Should redirect to sign in page
+      router.push("/login");
+    }
+  };
+  const handleViewMyGitHubAnalysis = () => {
+    if (session?.user?.githubUsername) {
+      router.push(`/${session?.user?.githubUsername}/GitHubAnalysis`);
+    } else {
+      // Should redirect to sign in page
+      router.push("/login");
+    }
+  };
 
   useEffect(() => {
     if (barisopen) {
@@ -51,104 +66,97 @@ console.log("this is sessisin--------------------------: ", session);
 
   return (
     <div>
+      {/* Sidebar */}
       <div
         ref={boxRef}
-        className={`fixed top-0 right-0 h-screen w-[300px] bg-gray-300 shadow shadow-gray-500 flex flex-col justify-between transform transition-transform duration-300 ${
+        className={`fixed top-0 right-0 h-screen w-64 bg-blue-100 shadow-lg flex flex-col justify-between transform transition-transform duration-300 ease-in-out z-50 ${
           barisopen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div>
-          <div className="flex justify-end w-[100%] pt-4 pr-6 text-4xl font-semibold mb-4 cursor-pointer">
-            <RxCross2
+        {/* Header section */}
+        <div className="flex flex-col">
+          <div className="flex justify-end w-full pt-4 pr-4 mb-6">
+            <button
               onClick={handleOnClick}
-              className="bg-gray-200 p-1 flex justify-center items-center rounded-full"
-            />
+              className="p-2 bg-blue-200 hover:bg-blue-200 rounded-full transition-colors duration-200"
+              aria-label="Close sidebar"
+            >
+              <RxCross2 className="text-blue-600 text-xl" />
+            </button>
           </div>
 
-          <div className="w-[100%] pb-4">
-            <div className="bg-gray-300 px-3 shadow shadow-gray-500 py-1 text-xl font-semi-bold">
-              <Link 
-              href={`/pullrequests?username=${session?.user.githubUsername}&userId=${userId}`}
-              > Edit PRs</Link>
-            </div>
+          {/* Navigation Links */}
+          <div className="flex flex-col space-y-2 px-4">
+            <button
+              onClick={handleHomePage}
+              className="py-3 px-4 text-blue-800 font-medium bg-blue-200 hover:bg-blue-300 rounded-lg transition-colors duration-200"
+            >
+              Home
+            </button>
+            <button
+              onClick={handleViewMyPortfolio}
+              className="py-3 px-4 text-blue-800 font-medium bg-blue-200 hover:bg-blue-300 rounded-lg transition-colors duration-200"
+            >
+              My Portfolio
+            </button>
 
-            <div className="bg-gray-300 px-3 shadow shadow-gray-500 py-1 text-xl font-semi-bold">
-              <Link 
-              href={`/repositories?username=${session?.user.githubUsername}`}
-              > Edit Repos</Link>
-            </div>
+            <button
+              onClick={handleViewMyGitHubAnalysis}
+              className="py-3 px-4 text-blue-800 font-medium bg-blue-200 hover:bg-blue-300 rounded-lg transition-colors duration-200"
+            >
+              Ai Analysis
+            </button>
           </div>
         </div>
 
-        <div className="bottom-0 bg-gray-300 h-15">
-              {/* {isLoggedIn ? (
-                <div className="relative group">
-                  <Link href="../signup">
-                  <div>
-                    <MdLogout className="text-5xl pl-3 cursor-pointer" />
-                  </div>
-                  </Link>
-                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                    Logout
-                  </span>
-                </div>
-              ) : (
-                <div className="relative group">
-                  <Link href="../login">
-                    <div>
-                      <MdLogin className="text-5xl pl-3 cursor-pointer" />
-                    </div>
-                  </Link>
-                  <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                    Login
-                  </span>
-                </div>
-              )} */}
-
+        {/* User info and logout section */}
+        <div className="p-4 border-t border-blue-100">
           {!session?.user ? (
-                  <div className="relative group">
-                    <Link href="/login">
-                      <div>
-                        <MdLogin className="text-5xl pl-3 cursor-pointer" />
-                      </div>
-                    </Link>
-                    <span className="absolute bottom-full translate-x-1/2 mb-1 hidden group-hover:inline-block bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                      Login
-                    </span>
-                  </div>
-                ) : (
-                  <div className="relative flex items-center gap-2">
-                    <span className="ml-2 font-semibold">{session.user.name}</span>
-                    {session.user.image && (
-                      <Image
-                        src={session.user.image}
-                        width={30}
-                        height={30}
-                        alt="User Avatar"
-                        className="rounded-full"
-                      />
-                    )}
-                    
-                    <button
-                      onClick={() => signOut({ callbackUrl: "/login" })}
-                      className="relative group flex items-center"
-                    >
-                      <MdLogout className="text-5xl pl-3 cursor-pointer" />
-                      
-                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 ease-in-out bg-gray-500 text-white text-sm py-1 px-2 rounded shadow-md">
-                        Logout
-                      </span>
-                    </button>
-                  </div>
-
+            <Link
+              href="/login"
+              className="flex items-center justify-center p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+            >
+              <MdLogin className="mr-2" />
+              <span>Login</span>
+            </Link>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                {session.user.image && (
+                  <Image
+                    src={session.user.image}
+                    width={36}
+                    height={36}
+                    alt="User Avatar"
+                    className="rounded-full"
+                  />
                 )}
+                <span className="font-medium text-blue-800">
+                  {session.user.name}
+                </span>
+              </div>
+              
+              <button
+                onClick={() => signOut({ callbackUrl: "/login" })}
+                className="flex items-center justify-center w-full p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+              >
+                <MdLogout className="mr-2" />
+                <span>Logout</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="w-[100%] flex justify-end items-center h-[7%] pt-4 pr-6">
-        <div className="bg-gray-200 rounded-full p-2 text-2xl flex items-center justify-center cursor-pointer">
-          <FaBars onClick={() => setBarisopen(!barisopen)} />
-        </div>
+      {/* Toggle button */}
+      <div className="fixed top-4 right-4 z-40">
+        <button
+          onClick={() => setBarisopen(!barisopen)}
+          className="p-3 bg-blue-300 text-white rounded-full shadow-md hover:bg-blue-400 transition-colors duration-200"
+          aria-label="Toggle sidebar"
+        >
+          <FaBars className="text-xl" />
+        </button>
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ export default function Login() {
   // ✅ Redirect only after the component is mounted
   useEffect(() => {
     if (session?.user?.githubUsername) {
-      router.push(`/${session.user.githubUsername}`);
+      router.push(`/`);
     }
   }, [session, router]); // ✅ Runs only when session updates
 
@@ -80,7 +80,7 @@ export default function Login() {
                     if (!session?.user?.githubUsername) throw new Error("GitHub username not found");
 
                     // ✅ Redirect after session is updated
-                    router.push(`/${session.user.githubUsername}`);
+                    router.push(`/`);
                   } catch (error) {
                     console.error("Error during Login:", error);
                     setTexterror("Login failed. Please try again.");
