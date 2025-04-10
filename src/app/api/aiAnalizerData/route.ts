@@ -35,8 +35,9 @@ export async function GET(req: NextRequest) {
     // Generate new review only if button was clicked
     if (buttonClicked) {
       try {
-        const apiBaseUrl = process.env.AI_SERVER_URL;
-        const response = await fetch(`${apiBaseUrl}/analyze`, {
+        // const apiBaseUrl = process.env.AI_SERVER_URL;
+        
+        const response = await fetch(`http://51.21.185.220/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: githubUsername }),
