@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 interface AnalysisResultProps {
   githubUsername: string;
 }
-
 interface Repo {
   repoName: string;
   primaryLanguage: string;
