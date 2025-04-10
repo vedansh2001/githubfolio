@@ -35,8 +35,8 @@ export async function GET(req: NextRequest) {
     // Generate new review only if button was clicked
     if (buttonClicked) {
       try {
-        // const response = await fetch("https://github-analyzer-wnvf.onrender.com/analyze", {
-        const response = await fetch("http://127.0.0.1:8000/analyze", {
+        const apiBaseUrl = process.env.AI_SERVER_URL;
+        const response = await fetch(`${apiBaseUrl}/analyze`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username: githubUsername }),
