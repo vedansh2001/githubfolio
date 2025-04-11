@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
+// Handle CORS preflight
+export async function OPTIONS() {
+  return NextResponse.json({}, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
 // Fire-and-forget background processing function
 async function handleBackgroundTask(githubUsername: string) {
   try {
@@ -39,7 +51,10 @@ export async function GET(req: NextRequest) {
   if (!githubUsername) {
     return NextResponse.json(
       { message: "GithubUsername is required" },
-      { status: 400 }
+      {
+        status: 400,
+        headers: { "Access-Control-Allow-Origin": "*" },
+      }
     );
   }
 
@@ -51,23 +66,32 @@ export async function GET(req: NextRequest) {
     if (!user) {
       return NextResponse.json(
         { message: "User not found" },
-        { status: 404 }
+        {
+          status: 404,
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
       );
     }
 
     if (buttonClicked) {
-      // Fire background task without awaiting
-      handleBackgroundTask(githubUsername);
-      return new Response(null, { status: 204 }); // Respond immediately
+      handleBackgroundTask(githubUsername); // don't await
+      return new Response(null, {
+        status: 204,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      });
     }
 
-    // If not button click, return cached review (if exists)
     if (user.aiReview) {
       return NextResponse.json(
         { aiReview: user.aiReview },
         {
           status: 200,
-          headers: { "Cache-Control": "no-store" },
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-store",
+          },
         }
       );
     }
@@ -76,14 +100,22 @@ export async function GET(req: NextRequest) {
       { message: "No analysis found. Click the button to generate a review." },
       {
         status: 200,
-        headers: { "Cache-Control": "no-store" },
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Cache-Control": "no-store",
+        },
       }
     );
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(
       { message: "An error occurred while processing your request." },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+        },
+      }
     );
   } finally {
     await prisma.$disconnect();
