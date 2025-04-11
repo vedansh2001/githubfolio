@@ -36,3 +36,23 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Python/FastAPI backend
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.log
+
+# Ignore virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Ignore FastAPI build/deploy files if any
+dist/
+build/
+*.egg-info/

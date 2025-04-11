@@ -1,0 +1,42 @@
+[33m047ea25[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m fix: typescript error
+[33m9409b00[m fix : typescript error
+[33m9e27321[m fix: typescript error (now used optional chaining)
+[33m8197b2a[m Trying to solve deployment issue- 2
+[33me91d98f[m Just trying to solve deployment issue on Amplify
+[33mbcf5fc5[m fix: moving all api from app to pages directory
+[33m0d5f1a8[m refractor: add "experimental" in next.config.mjs
+[33m3b6b535[m fix: server URL
+[33m8d095ef[m refractor: in githubanalysis
+[33m062962b[m fix: url of server
+[33mb322619[m bug: unwanted passing or props.
+[33m4299fe7[m bug: unwanted passing of props
+[33m5d144fe[m feat: add HomePage and AIAnalyzer (also its route).
+[33m6a945c1[m fix: update gemini prompt to remove comments from the JSON response and much more.
+[33me852379[m fix: Json format response error by the gemini
+[33mf59dd74[m fix : add start.sh file
+[33m9f02ace[m feat: backend for ai review of GitHub
+[33m7b5d17a[m feat : automatically log in after signing up
+[33m214d1a8[m style : change in styling of components
+[33mb2ceed0[m feat : Can perform certain actions only if logged in.
+[33m4ba5cde[m bug : bug in page/[username]
+[33m2cc5a6a[m refactor : code refraction
+[33m2b4858a[m refactor : code refraction
+[33m5f6313f[m bug : error in [username]/page.tsx
+[33m56c4bfc[m feat : logout feature
+[33m908e0df[m bug : "default" in signup page export
+[33mb26b919[m refractor : remove unecessary lines
+[33mb8acb46[m fix : typescript errors
+[33m912b5dc[m bug : fixed error
+[33m7040b7c[m bog : error in src/actions/login.ts
+[33m27ab6ff[m Merge branch 'main' of https://github.com/vedansh2001/githubfolio
+[33m2334f15[m Feat : Next Auth implimentation
+[33m16f8638[m Update login.tsx
+[33meca0ce9[m Update login.tsx
+[33m1ceaa7d[m Merge pull request #1 from vedansh2001/vedansh2001-default-user-credentials
+[33m5b949d6[m feat: Add default credentials for guest user login
+[33m1aed6ba[m Feat : login and signup.
+[33m6884918[m updated fetch link
+[33md230116[m created Login routes and improved sign up routes
+[33mba3e8b2[m fixed error
+[33ma5b7bb0[m rapped a component in <suspense> because useSearchParams was causing error
+[33m75c105d[m created pinned PR features and much more things
