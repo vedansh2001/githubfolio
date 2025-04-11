@@ -80,7 +80,7 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
 
       // Send request to start background analysis
       fetch(
-        `/api/aiAnalizerData?githubUsername=${githubUsername}&buttonClicked=true&ts=${Date.now()}`,
+        `https://githubfolio.onrender.com/api/aiAnalizerData?githubUsername=${githubUsername}&buttonClicked=true&ts=${Date.now()}`,
         {
           method: "GET",
           headers: {
