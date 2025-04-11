@@ -1,6 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 
+// Fire-and-forget background processing function
+async function handleBackgroundTask(githubUsername: string) {
+  try {
+    const response = await fetch(`http://51.21.185.220/analyze`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: githubUsername }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch analysis: ${response.status}`);
+    }
+
+    const { data: aiData } = await response.json();
+
+    await prisma.user.update({
+      where: { githubUsername },
+      data: { aiReview: aiData },
+    });
+
+    console.log("AI analysis saved successfully for", githubUsername);
+  } catch (error) {
+    console.error("Error in background task:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const githubUsername = searchParams.get("githubUsername");
@@ -9,7 +37,10 @@ export async function GET(req: NextRequest) {
   console.log("Button click request:", { githubUsername, buttonClicked });
 
   if (!githubUsername) {
-    return NextResponse.json({ message: "GithubUsername is required" }, { status: 400 });
+    return NextResponse.json(
+      { message: "GithubUsername is required" },
+      { status: 400 }
+    );
   }
 
   try {
@@ -18,36 +49,19 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
     }
 
-    // If button is clicked, save data silently and return nothing
     if (buttonClicked) {
-      try {
-        await fetch(`http://51.21.185.220/analyze`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: githubUsername }),
-        }).then(async (response) => {
-          if (!response.ok) throw new Error(`Failed to fetch analysis: ${response.status}`);
-          const { data: aiData } = await response.json();
-          await prisma.user.update({
-            where: { githubUsername },
-            data: { aiReview: aiData },
-          });
-        }).catch((error) => {
-          console.error("Silent error during AI fetch:", error);
-        });
-
-        // Don't return anything to the frontend
-        return new Response(null, { status: 204 }); // No Content
-      } catch (error) {
-        console.error("Error saving data silently:", error);
-        return new Response(null, { status: 204 }); // Still return no content
-      }
+      // Fire background task without awaiting
+      handleBackgroundTask(githubUsername);
+      return new Response(null, { status: 204 }); // Respond immediately
     }
 
-    // Return existing review if available
+    // If not button click, return cached review (if exists)
     if (user.aiReview) {
       return NextResponse.json(
         { aiReview: user.aiReview },
