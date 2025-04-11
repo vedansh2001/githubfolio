@@ -5,7 +5,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const githubUsername = searchParams.get("githubUsername");
   const buttonClicked = searchParams.get("buttonClicked") === "true";
-  
+
   console.log("Button click request:", { githubUsername, buttonClicked });
 
   if (!githubUsername) {
@@ -16,9 +16,35 @@ export async function GET(req: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { githubUsername },
     });
-    
+
     if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    // If button is clicked, save data silently and return nothing
+    if (buttonClicked) {
+      try {
+        await fetch(`http://51.21.185.220/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: githubUsername }),
+        }).then(async (response) => {
+          if (!response.ok) throw new Error(`Failed to fetch analysis: ${response.status}`);
+          const { data: aiData } = await response.json();
+          await prisma.user.update({
+            where: { githubUsername },
+            data: { aiReview: aiData },
+          });
+        }).catch((error) => {
+          console.error("Silent error during AI fetch:", error);
+        });
+
+        // Don't return anything to the frontend
+        return new Response(null, { status: 204 }); // No Content
+      } catch (error) {
+        console.error("Error saving data silently:", error);
+        return new Response(null, { status: 204 }); // Still return no content
+      }
     }
 
     // Return existing review if available
@@ -27,49 +53,16 @@ export async function GET(req: NextRequest) {
         { aiReview: user.aiReview },
         {
           status: 200,
-          headers: { "Cache-Control": "no-store" }
+          headers: { "Cache-Control": "no-store" },
         }
       );
     }
 
-    // Generate new review only if button was clicked
-    if (buttonClicked) {
-      try {
-        // const apiBaseUrl = process.env.AI_SERVER_URL;
-        
-        const response = await fetch(`http://51.21.185.220/analyze`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username: githubUsername }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch analysis: ${response.status}`);
-        }
-
-        const { data: aiData } = await response.json();
-
-        await prisma.user.update({
-          where: { githubUsername },
-          data: { aiReview: aiData },
-        });
-
-        return NextResponse.json({ aiReview: aiData }, { status: 200 });
-      } catch (error) {
-        console.error("Error fetching AI review:", error);
-        return NextResponse.json(
-          { message: "Failed to generate AI review", error: (error as Error).message },
-          { status: 500 }
-        );
-      }
-    }
-
-    // User hasn't clicked the button and no existing review
     return NextResponse.json(
       { message: "No analysis found. Click the button to generate a review." },
       {
         status: 200,
-        headers: { "Cache-Control": "no-store" }
+        headers: { "Cache-Control": "no-store" },
       }
     );
   } catch (error) {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {CheckCircle, Info} from "lucide-react";
+import { CheckCircle, Info } from "lucide-react";
 import AIAnalysisSkeleton from "./AIAnalysisSkeleton";
 import { useSession } from "next-auth/react";
 
@@ -30,23 +30,23 @@ interface AnalysisResultType {
   repositoriesAnalysis: Repo[];
 }
 
-
-
-const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {    
-
+const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
   const [result, setResult] = useState<AnalysisResultType | null>(null);
   const [loading, setLoading] = useState(false);
   const [skeletonloading, setSkeletonloading] = useState(false);
+  const [showProgressBar, setShowProgressBar] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();
 
   useEffect(() => {
-    setSkeletonloading(true)
     if (!githubUsername) return;
     const fetchInitialReview = async () => {
       try {
+        setSkeletonloading(true);
         setError(null);
-        const response = await fetch(`/api/aiAnalizerData?githubUsername=${githubUsername}&ts=${Date.now()}`,
+        const response = await fetch(
+          `/api/aiAnalizerData?githubUsername=${githubUsername}&ts=${Date.now()}`,
           {
             method: "GET",
             headers: {
@@ -54,27 +54,18 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
             },
           }
         );
-
-        const responseData = await response.json();       
-
+        const responseData = await response.json();
         if ("aiReview" in responseData && responseData.aiReview !== null) {
           setResult(responseData.aiReview);
-        }
-        
-        else if (responseData.message) {
+        } else if (responseData.message) {
           setError(responseData.message);
         } else {
           setError("Unknown error occurred.");
         }
       } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unexpected error occurred.");
-        }
-      }
-       finally {
-        setSkeletonloading(false)
+        setError(error instanceof Error ? error.message : "An unexpected error occurred.");
+      } finally {
+        setSkeletonloading(false);
       }
     };
     fetchInitialReview();
@@ -83,10 +74,12 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
   const GetCodeReview = async () => {
     try {
       setLoading(true);
-      setSkeletonloading(true)
+      setShowProgressBar(true);
+      setProgress(0);
       setError(null);
 
-      const response = await fetch(
+      // Send request to start background analysis
+      fetch(
         `/api/aiAnalizerData?githubUsername=${githubUsername}&buttonClicked=true&ts=${Date.now()}`,
         {
           method: "GET",
@@ -96,28 +89,51 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
         }
       );
 
-      const responseData = await response.json();
+      // Progress bar animation for 60 seconds
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 1.7; // approx 60 sec
+        });
+      }, 1000);
 
-      if (responseData) {
-        setResult(responseData.aiReview);
-        setError(null); // clear message
-      } else {
-        setError("Still couldn’t get the review. Try again.");
-      }
-    } 
-    catch (error) {
-      console.error("Error fetching code review:", error);
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred.");
-      }
-    }
-     finally {
+      // Wait 60 seconds then refetch analyzed data
+      setTimeout(async () => {
+        try {
+          const fetchResponse = await fetch(
+            `/api/aiAnalizerData?githubUsername=${githubUsername}&ts=${Date.now()}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const data = await fetchResponse.json();
+          if ("aiReview" in data && data.aiReview !== null) {
+            setResult(data.aiReview);
+          } else if (data.message) {
+            setError(data.message);
+          } else {
+            setError("Unknown error occurred.");
+          }
+        } catch (fetchError) {
+          setError("Failed to fetch updated analysis.");
+        } finally {
+          setLoading(false);
+          setShowProgressBar(false);
+        }
+      }, 60000); // 60 sec
+    } catch (error) {
+      console.error("Error sending review request:", error);
       setLoading(false);
-      setSkeletonloading(false);
+      setShowProgressBar(false);
     }
   };
+  
 
   const RatingBadge = ({ rating }: {rating: number}) => {
     const getBadgeColor = (rating: number) => {
@@ -182,59 +198,66 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
   return (
     <>
       <div className="w-full pt-10 px-4">
-        {session?.user && (<div className="text-2xl font-bold flex flex-col sm:flex-row justify-center items-center gap-3 mb-6">
-          <span>Get a detailed analysis of your GitHub by AI:</span>
-          <button
-            type="button"
-            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            } text-white disabled:opacity-70`}
-            onClick={GetCodeReview}
-            disabled={loading}
-            aria-busy={loading}
+        {session?.user && (
+          <div className="text-2xl font-bold flex flex-col sm:flex-row justify-center items-center gap-3 mb-6">
+            <span>Get a detailed analysis of your GitHub by AI:</span>
+            <button
+              type="button"
+              className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+              } text-white disabled:opacity-70`}
+              onClick={GetCodeReview}
+              disabled={loading}
+              aria-busy={loading}
             >
-            {loading ? (
+              {loading ? (
                 <span className="flex items-center gap-2">
-                <svg
+                  <svg
                     className="animate-spin h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                >
+                  >
                     <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
                     />
                     <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v8H4z"
                     />
-                </svg>
-                Analyzing...
+                  </svg>
+                  Analyzing...
                 </span>
-            ) : (
+              ) : (
                 "Get review"
-            )}
+              )}
             </button>
-        </div>
-      )}
-
-
-      {error && (
-        <div className="max-w-4xl mx-auto mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
-          <div className="flex items-center gap-2">
-            <Info size={20} />
-            <p>{error}</p>
           </div>
-        </div>
-      )}
+        )}
+
+        {showProgressBar && (
+          <div className="max-w-2xl mx-auto w-full h-3 rounded-full bg-gray-200 overflow-hidden mb-6">
+            <div
+              className="h-3 bg-blue-500 transition-all duration-100"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        )}
+
+        {error && (
+          <div className="max-w-4xl mx-auto mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
+            <div className="flex items-center gap-2">
+              <Info size={20} />
+              <p>{error}</p>
+            </div>
+          </div>
+        )}
 
       {skeletonloading ? (
               <AIAnalysisSkeleton />
