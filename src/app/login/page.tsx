@@ -11,28 +11,27 @@ export default function Login() {
   const [email, setEmail] = useState("vedanshmdev@gmail.com");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [githubLoading, setGithubLoading] = useState(false); // 🔹 Separate loading state for GitHub login
+  const [githubLoading, setGithubLoading] = useState(false);
   const [goterror, setGoterror] = useState(false);
   const [texterror, setTexterror] = useState("");
 
-  const { data: session } = useSession(); // ✅ Fetch sessio
+  const { data: session } = useSession();
 
-  // ✅ Redirect only after the component is mounted
   useEffect(() => {
     if (session?.user?.githubUsername) {
       router.push(`/`);
     }
-  }, [session, router]); // ✅ Runs only when session updates
+  }, [session, router]);
 
   return (
-    <div className="h-screen flex justify-center flex-col">
-      <div className="flex justify-center">
-        <div className="block w-[22%] p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+    <div className="min-h-screen flex justify-center items-center py-8 px-4">
+      <div className="max-w-md w-full">
+        <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div>
-            <div className="px-10">
-              <div className="text-3xl font-extrabold flex justify-center">Log In</div>
+            <div className="mb-6">
+              <h1 className="text-2xl md:text-3xl font-bold text-center">Log In</h1>
             </div>
-            <div className="pt-2">
+            <div>
               <LabelledInput
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -48,14 +47,14 @@ export default function Login() {
                 placeholder="password"
                 key="password"
               />
-              <div className="pt-4 text-xs flex justify-center font-semibold">
+              <div className="pt-4 text-sm flex justify-center font-medium">
                 Create account?
-                <Link href="/signup" className="text-blue-600 font-semibold ml-1">
+                <Link href="/signup" className="text-blue-600 font-semibold ml-1 hover:text-blue-700 transition-colors">
                   Sign Up
                 </Link>
               </div>
 
-              {/* 🔹 Sign-in Button */}
+              {/* Sign-in Button */}
               <button
                 onClick={async () => {
                   if (!password || !email) {
@@ -71,7 +70,6 @@ export default function Login() {
 
                     console.log("GitHub login successful. Fetching session...");
 
-                    // ✅ Wait for session to be updated
                     const response = await fetch("/api/auth/session", { cache: "no-store" });
                     const session = await response.json();
 
@@ -79,23 +77,23 @@ export default function Login() {
 
                     if (!session?.user?.githubUsername) throw new Error("GitHub username not found");
 
-                    // ✅ Redirect after session is updated
                     router.push(`/`);
                   } catch (error) {
                     console.error("Error during Login:", error);
                     setTexterror("Login failed. Please try again.");
+                    setGoterror(true);
                   } finally {
                     setLoading(false);
                   }
                 }}
                 disabled={loading}
                 type="button"
-                className={`mt-2 w-full text-white bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 flex justify-center
-                  ${loading ? "cursor-not-allowed opacity-50" : ""}`}
+                className={`mt-4 w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 flex justify-center transition-colors
+                  ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
                 {loading ? (
                   <svg
-                    className="animate-spin h-5 w-5 text-white mr-2 flex cursor-not-allowed"
+                    className="animate-spin h-5 w-5 text-white mr-2"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -119,26 +117,30 @@ export default function Login() {
                 )}
               </button>
 
-              <div className="flex w-full justify-center">or</div>
+              <div className="flex items-center my-4">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <div className="px-4 text-sm text-gray-500">or</div>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
 
-              {/* 🔹 GitHub Login Button with Animation */}
+              {/* GitHub Login Button with Animation */}
               <button
-            className="mt-2 w-full text-white bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 flex justify-center"
-            onClick={async () => {
-              setGithubLoading(true);
-              try {
-                await signIn("github"); // ✅ Redirects automatically
-              } catch (error) {
-                console.error("GitHub login failed:", error);
-              } finally {
-                setGithubLoading(false);
-              }
-            }}
-            disabled={githubLoading}
-          >
+                className="w-full text-white bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 flex justify-center transition-colors"
+                onClick={async () => {
+                  setGithubLoading(true);
+                  try {
+                    await signIn("github");
+                  } catch (error) {
+                    console.error("GitHub login failed:", error);
+                  } finally {
+                    setGithubLoading(false);
+                  }
+                }}
+                disabled={githubLoading}
+              >
                 {githubLoading ? (
                   <svg
-                    className="animate-spin h-5 w-5 text-white mr-2 flex cursor-not-allowed"
+                    className="animate-spin h-5 w-5 text-white mr-2"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -167,9 +169,9 @@ export default function Login() {
       </div>
 
       {goterror && (
-        <div className="flex justify-center items-center text-gray-600 font-semibold mt-2">
-          <BiSolidError className="mr-1 text-red-500 text-xl" />
-          {texterror}
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-center text-yellow-800 shadow-md">
+          <BiSolidError className="mr-2 text-red-500 text-xl flex-shrink-0" />
+          <span>{texterror}</span>
         </div>
       )}
     </div>
@@ -178,13 +180,13 @@ export default function Login() {
 
 function LabelledInput({ label, placeholder, type, value, onChange }: LabelledInputType) {
   return (
-    <div>
-      <label className="block mb-2 text-sm text-black font-semibold pt-4">{label}</label>
+    <div className="mb-4">
+      <label className="block mb-2 text-sm font-semibold text-gray-700">{label}</label>
       <input
         value={value}
         onChange={onChange}
         type={type || "text"}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 transition-colors"
         placeholder={placeholder}
         required
       />
