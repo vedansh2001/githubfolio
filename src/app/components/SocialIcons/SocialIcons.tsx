@@ -17,63 +17,57 @@ const SocialIcons = () => {
   };
 
   return (
-    <div className="bg-gray-300 border border-gray-400 rounded-lg shadow-lg p-5 py-3 text-xl mt-3 w-[80%] mx-auto">
-      {/* Title */}
-      <p className="font-semibold text-gray-800 text-2xl flex items-center justify-center mb-4">
-        Share on Socials
-      </p>
+    <div className="w-full mt-4 pb-6">
+      <div className="bg-white border p-6 rounded-2xl shadow-md max-w-xl mx-auto">
+        <p className="text-xl font-semibold text-center text-gray-800 mb-4">
+          Share on Socials
+        </p>
 
-      {/* Social Icons Wrapper */}
-      <div className="flex justify-center space-x-6">
-        {/* LinkedIn */}
-        <button
-          className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-600 text-white text-2xl shadow-md hover:scale-110 hover:bg-blue-700 transition duration-300"
-          onClick={() =>
-            window.open(`https://www.linkedin.com/shareArticle?url=${url}`, "_blank")
-          }
-          aria-label="Share on LinkedIn"
-        >
-          <FaLinkedin />
-        </button>
-
-        {/* Twitter */}
-        <button
-          className="w-14 h-14 flex items-center justify-center rounded-full bg-black text-white text-2xl shadow-md hover:scale-110 hover:bg-gray-800 transition duration-300"
-          onClick={() =>
-            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank")
-          }
-          aria-label="Share on Twitter"
-        >
-          <FaXTwitter />
-        </button>
-
-        {/* Facebook */}
-        <button
-          className="w-14 h-14 flex items-center justify-center rounded-full bg-blue-700 text-white text-2xl shadow-md hover:scale-110 hover:bg-blue-800 transition duration-300"
-          onClick={() =>
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank")
-          }
-          aria-label="Share on Facebook"
-        >
-          <FaFacebook />
-        </button>
-
-        {/* Copy Link */}
-        <div className="relative group">
+        <div className="flex justify-center gap-6">
           <button
-            className="w-14 h-14 flex items-center justify-center rounded-full bg-gray-600 text-white text-2xl shadow-md hover:scale-110 hover:bg-gray-800 transition duration-300"
-            onClick={handleCopyLink}
-            aria-label="Copy Link"
+            onClick={() =>
+              window.open(`https://www.linkedin.com/shareArticle?url=${url}`, "_blank")
+            }
+            aria-label="Share on LinkedIn"
+            className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl shadow hover:scale-110 transition"
           >
-            <FaLink />
+            <FaLinkedin />
           </button>
 
-          {/* Copied Tooltip */}
-          {showCopied && (
-            <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-blue-500 text-white text-xs py-1 px-2 rounded shadow-md transition-opacity duration-200">
-              Copied!
-            </span>
-          )}
+          <button
+            onClick={() =>
+              window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, "_blank")
+            }
+            aria-label="Share on Twitter"
+            className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-xl shadow hover:scale-110 transition"
+          >
+            <FaXTwitter />
+          </button>
+
+          <button
+            onClick={() =>
+              window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, "_blank")
+            }
+            aria-label="Share on Facebook"
+            className="w-12 h-12 rounded-full bg-blue-700 text-white flex items-center justify-center text-xl shadow hover:scale-110 transition"
+          >
+            <FaFacebook />
+          </button>
+
+          <div className="relative group">
+            <button
+              onClick={handleCopyLink}
+              aria-label="Copy Link"
+              className="w-12 h-12 rounded-full bg-gray-700 text-white flex items-center justify-center text-xl shadow hover:scale-110 transition"
+            >
+              <FaLink />
+            </button>
+            {showCopied && (
+              <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-green-600 text-white text-xs rounded shadow">
+                Copied!
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

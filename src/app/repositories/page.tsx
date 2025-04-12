@@ -23,7 +23,7 @@ const Repositories: React.FC = () => {
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
   const [addedRepos, setAddedRepos] = useState<Repository[]>([]);
   const [loadingRepoId, setLoadingRepoId] = useState<number | null>(null);
-  const [barisopen, setBarisopen] = useState(false)
+  const [barisopen, setBarisopen] = useState(false);
 
   useEffect(() => {
     if (username) {
@@ -47,14 +47,11 @@ const Repositories: React.FC = () => {
 
   const handleSelectRepo = (id: number) => {
     setLoadingRepoId(id);
-
-    const fetchdata = async (id: number) => {
+    const fetchdata = async () => {
       try {
-        const url = `/api/repository?Id=${encodeURIComponent(id)}&username=${encodeURIComponent(username || '')}`;
+        const url = `/api/repository?Id=${id}&username=${username}`;
         const res = await fetch(url, { method: "POST" });
-
         if (!res.ok) throw new Error("Failed to add repository");
-
         const data = await res.json();
         setSelectedRepos(data.selectedRepos);
         setAddedRepos(data.selectedRepos);
@@ -64,38 +61,31 @@ const Repositories: React.FC = () => {
         setLoadingRepoId(null);
       }
     };
-
-    fetchdata(id);
+    fetchdata();
   };
 
   return (
-    <div className="bg-gray-200">
+    <div className="bg-white min-h-screen pt-10">
+      <div className="w-full flex justify-center text-4xl font-semibold" >Respositories</div>
 
-    <FabarComponent
-    setBarisopen={setBarisopen}
-    barisopen={barisopen}
-    />
+      <FabarComponent setBarisopen={setBarisopen} barisopen={barisopen} />
 
-    <div className={`h-screen pt-[3%] px-[10%] flex ${
-      session.status === "authenticated" ? "justify-between" : "justify-center"
-    }`}>
-      
-      {/* Repository List Component */}
-      {session.status === "authenticated" && (<SelectRepositories
-        repos={Repos}
-        addedRepos={addedRepos}
-        loadingRepoId={loadingRepoId}
-        handleSelectRepo={handleSelectRepo}
-      />
-      )}
-
-      <SelectedRepositories
-        selectedRepos={selectedRepos}
-        setSelectedRepos={setSelectedRepos}
-        setAddedRepos={setAddedRepos}
-        username={username}
-      />
-    </div>
+      <div className="pt-8 px-4 md:px-12 flex flex-col lg:flex-row justify-center items-start gap-6 flex-wrap">
+        {session.status === "authenticated" && (
+          <SelectRepositories
+            repos={Repos}
+            addedRepos={addedRepos}
+            loadingRepoId={loadingRepoId}
+            handleSelectRepo={handleSelectRepo}
+          />
+        )}
+        <SelectedRepositories
+          selectedRepos={selectedRepos}
+          setSelectedRepos={setSelectedRepos}
+          setAddedRepos={setAddedRepos}
+          username={username}
+        />
+      </div>
     </div>
   );
 };

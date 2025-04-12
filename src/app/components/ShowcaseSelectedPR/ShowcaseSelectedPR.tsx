@@ -97,7 +97,7 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
         listOfSelectedPRs.map((item) => (
           <div
             key={item.id}
-            className="w-[70%] bg-gray-300 border border-gray-800 shadow-md rounded-lg mb-4 p-4 transition-all hover:shadow-lg"
+            className="w-[70%] bg-blue-50 border border-gray-800 shadow-md rounded-lg mb-4 p-4 transition-all hover:shadow-lg"
           >
             {/* Header */}
             <div className="flex justify-between items-center">
@@ -116,25 +116,25 @@ const ShowcaseSelectedPR: React.FC<ShowcaseSelectedPRProps> = ({
                   <FaSpinner className="animate-spin text-gray-500 text-lg" />
                 ) : item.isPinned ? (
                   <RxDrawingPinFilled
-                    className="cursor-pointer text-green-600 text-xl hover:text-green-800 transition"
+                    className="cursor-pointer text-blue-500 text-xl hover:text-blue-700 transition"
                     onClick={() => handlePinUnpin(item.id, false)}
                   />
                 ) : (
                   <RxDrawingPin
-                    className="cursor-pointer text-gray-600 text-xl hover:text-black transition"
+                    className="cursor-pointer text-blue-500 text-xl hover:text-black transition"
                     onClick={() => handlePinUnpin(item.id, true)}
                   />
                 )}
 
                 {/* External Link */}
-                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 transition">
+                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-600 transition">
                   <FaExternalLinkAlt />
                 </a>
 
                 {/* Toggle Description */}
                 <button
                   onClick={() => toggleDescription(item.id)}
-                  className="bg-gray-400 rounded-full p-1 hover:bg-gray-500 transition"
+                  className="bg-blue-300 rounded-full p-1 hover:bg-blue-400 transition"
                 >
                   <RiArrowDropDownLine className="text-2xl text-gray-700" />
                 </button>

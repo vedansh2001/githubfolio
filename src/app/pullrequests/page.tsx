@@ -54,33 +54,37 @@ const Pullrequest = () => {
   };
 
   return (
-    <div className="bg-gray-200">
+    <div className="bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white pt-10">
+      <div className="w-full flex justify-center text-4xl font-semibold" >Pull Requests</div>
       
       <FabarComponent
       setBarisopen={setBarisopen}
       barisopen={barisopen}
       />
       
-      <div className="h-screen">
+      <div className="h-screen pt-10 ">
+        <div className="w-[80%] ml-[10%]" >
         {/* pinned section present on the top */}
         <PinnedPRs 
           isPinnedToShowInPinnedSection={isPinnedToShowInPinnedSection}
           setIsPinnedToShowInPinnedSection={setIsPinnedToShowInPinnedSection}
           username={username}
         />
+        </div>
 
         {/* button to add select PR to be added */}
         {/* Show button only if user session exists */}
         {session.status === "authenticated" && (
-      <div className="w-[80%] ml-[10%] mb-6 mt-2 flex justify-end">
-        <button
-          className="bg-gradient-to-r from-green-500 to-green-600 border-2 border-black text-white font-semibold rounded-md px-4 py-[6px] shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
-          onClick={handleOpenAddPRBox}
-        >
-          Add PR +
-        </button>
-      </div>
-    )}
+          <div className="w-[80%] ml-[10%] mb-6 mt-2 flex justify-end">
+            <button
+              className="bg-gradient-to-r from-blue-300 to-blue-400 border border-black text-white font-semibold rounded-md px-4 py-[6px] shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out"
+              onClick={handleOpenAddPRBox}
+            >
+              Add PR +
+            </button>
+          </div>
+        )}
+
 
 
         {/* code of the selected PRs that will be displayed after being selected */}

@@ -96,72 +96,46 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
   };
 
   return (
-    <div className="min-h-[500px] w-[40%] mb-[10%] bg-gray-300 shadow-lg border border-black p-5 rounded-lg overflow-auto">
-      <h1 className="font-bold py-3 text-2xl text-center text-gray-800 border-b border-gray-300">
+    <div className="w-full lg:w-[45%] bg-white shadow-md border border-gray-300 rounded-xl p-6 overflow-auto max-h-[80vh]">
+      <h1 className="text-2xl font-bold text-blue-800 text-center border-b pb-2">
         Selected Repositories
       </h1>
 
-      {/* Repositories List */}
-      <div className="space-y-2 mt-3 ">
+
+      <div className="space-y-3 mt-4">
         {selectedRepos.map((repo) => (
           <div
             key={repo.id}
-            className="bg-gray-400 px-4 py-2 flex justify-between items-center border-1 border-black rounded-md shadow-sm transition-transform hover:scale-[1.02]"
+            className="bg-blue-50 px-4 py-2 flex justify-between items-center rounded-md border border-blue-200 hover:scale-[1.01] transition-transform"
           >
-            {/* Repository Name */}
-            <span 
-                className="font-medium flex items-center gap-4 truncate text-gray-800">
-                {repo.name}
-                
-                <Link href={`${repo.link}`} >
-                      <FaExternalLinkAlt className=" text-blue-700 hover:opacity-70 hover:scale-125 transition duration-200" />
-                </Link>
+            <span className="font-medium text-blue-900 flex items-center gap-3 truncate">
+              {repo.name}
+              <a href={repo.link} target="_blank" rel="noopener noreferrer">
+                <FaExternalLinkAlt className="text-blue-500 hover:opacity-75 transition-transform hover:scale-125" />
+              </a>
             </span>
-
             <div className="flex items-center gap-4">
-              {/* Pin/Unpin Button */}
               {pinLoadingRepoId === repo.id ? (
-                <svg
-                  className="animate-spin h-5 w-5 text-gray-700"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                  ></path>
+                <svg className="animate-spin h-5 w-5 text-blue-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                 </svg>
               ) : repo.isPinned ? (
-                <RxDrawingPinFilled
-                  className="text-gray-800 text-xl cursor-pointer hover:text-green-800 transition"
-                  onClick={() => togglePin(repo.id, true)}
-                />
+                <RxDrawingPinFilled className="text-blue-600 text-xl cursor-pointer" onClick={() => togglePin(repo.id, true)} />
               ) : (
-                <RxDrawingPin
-                  className="text-gray-600 text-xl cursor-pointer hover:text-black transition"
-                  onClick={() => togglePin(repo.id, false)}
-                />
+                <RxDrawingPin className="text-blue-600 text-xl cursor-pointer" onClick={() => togglePin(repo.id, false)} />
               )}
-
-              {/* Remove Button */}
               <button
-                className={`px-3 py-1 text-sm font-semibold rounded-md flex items-center border border-black bg-gradient-to-r hover:scale-105 hover:shadow-lg transition-transform duration-300 ease-in-out
-                  ${loadingRepoId === repo.id ? "bg-gray-400 text-gray-700 cursor-not-allowed" : "from-red-500 to-red-600 text-white"}`}
+                className={`px-3 py-1 text-sm font-semibold rounded-md border border-blue-400 shadow-sm transition-all duration-300 ease-in-out ${
+                  loadingRepoId === repo.id ? "bg-blue-300 text-white cursor-not-allowed" : "bg-blue-200 text-white hover:bg-blue-400"
+                }`}
                 onClick={() => handleRemoveRepo(repo.id)}
                 disabled={loadingRepoId === repo.id || pinLoadingRepoId === repo.id}
               >
                 {loadingRepoId === repo.id ? (
-                  <svg
-                    className="animate-spin h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                  <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                   </svg>
                 ) : (
                   "Remove"
@@ -174,5 +148,4 @@ const SelectedRepositories: React.FC<SelectedRepositoriesProps> = ({
     </div>
   );
 };
-
 export default SelectedRepositories;
