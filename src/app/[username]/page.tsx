@@ -42,6 +42,19 @@ interface AIReviewData {
     strengths: string[];
     improvementAreas: string[];
 }
+type PR = {
+  createdAt: string;
+  description: string | null;
+  full_name: string;
+  id: number;
+  isPinned: boolean;
+  link: string;
+  name: string;
+  number: number;
+  repositoryId: number;
+  state: string;
+  userId: number;
+};
 
 export default function Home({ params }: UserPageProps) {
   const { username } = params;
@@ -64,6 +77,7 @@ export default function Home({ params }: UserPageProps) {
   const [aiReview, setAiReview] = useState<AIReviewData | null>(null);
   const [isSkeletonLoading, setSkeletonLoading] = useState<boolean>(true);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
+  const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -189,7 +203,10 @@ export default function Home({ params }: UserPageProps) {
             {/* {userId !== 0 && (
               <PinnedPRs username={username}/>
             )} */}
-            <PinnedPRs username={username}/>
+            <PinnedPRs username={username} 
+            isPinnedToShowInPinnedSection={isPinnedToShowInPinnedSection}
+            setIsPinnedToShowInPinnedSection={setIsPinnedToShowInPinnedSection}
+            />
 
             {isUserDataLoading? (
               <div className="flex justify-end pr-10">

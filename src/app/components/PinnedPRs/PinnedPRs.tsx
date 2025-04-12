@@ -18,12 +18,14 @@ type PR = {
   userId: number;
 };
 
-type PinnedPRsProps = {username: string;
+type PinnedPRsProps = {username: string; 
+   isPinnedToShowInPinnedSection: PR[];
+   setIsPinnedToShowInPinnedSection: React.Dispatch<React.SetStateAction<PR[]>>;
 };
 
-const PinnedPRs: React.FC<PinnedPRsProps> = ({username}) => {
+const PinnedPRs: React.FC<PinnedPRsProps> = ({username, isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection}) => {
   const [loading, setLoading] = useState(true);
-    const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+    // const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
 
   useEffect(() => {
     const fetchPinnedPRs = async () => {
