@@ -1,5 +1,4 @@
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import React, { useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { RxDrawingPin, RxDrawingPinFilled } from "react-icons/rx";
