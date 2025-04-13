@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { hashPassword } from "@/utils/password";
 
 // Define the type for the GitHub repository data
 interface GitHubRepo {
@@ -14,6 +15,16 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    console.log("this is password: ", body.password);
+    
+    
+    let hashedPassword = null;
+    if (body.password) {
+      hashedPassword = await hashPassword(body.password);
+      console.log("this is hashed password: ", hashedPassword);
+      
+    }
+
 
     // First check if email or githubUsername already exists?
     const existingUser = await prisma.user.findFirst({
@@ -49,7 +60,7 @@ export async function POST(req: NextRequest) {
         name: body.name || githubData.name || "User", // Default fallback name
         githubUsername: body.githubUsername,
         email: body.email || "not_provided", // Handle missing email gracefully
-        password: body.password || null, // Ensure passwords are handled properly
+        password: hashedPassword || null, // Ensure passwords are handled properly
         bio: githubData.bio || "No bio available",
         location: githubData.location || "Unknown",
         followers: githubData.followers || 0,

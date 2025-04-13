@@ -1,17 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
+import { compare } from "bcryptjs";
 
 export async function POST(req: NextRequest) {
     try {
 
     const body = await req.json();
     const { email, password } = body;
-    console.log("this is the email and password received : ", email , password)
 
     if (!email || !password) {
         return NextResponse.json(
         {
-            message: "Email and password are requred.",
+            message: "Email and password are required.",
         },
         { status: 400 }
       );
@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
         email,
       },
     });
-    console.log("here is user: ",user);
     
 
     // If no user found or password doesn't match
@@ -35,11 +34,31 @@ export async function POST(req: NextRequest) {
         { status: 401 } // 401 is more appropriate for unauthorized access
       );
     }
-    const username = user?.githubUsername;
-    console.log("reached final stage");
-    
 
-    return NextResponse.json({ user, username }, { status: 200 });
+    // Verify the password against the stored hash
+    if(user?.password){
+    const isPasswordValid = await compare(password, user.password);
+    console.log("this is passowrd:", password, "this is user.password", user.password);
+    
+    // If password doesn't match
+    if (!isPasswordValid) {
+      return NextResponse.json(
+          {
+              message: "Email or password is incorrect.",
+          },
+          { status: 401 }
+      );
+      }
+    }
+        
+
+
+    const username = user?.githubUsername; 
+    const { password: _, ...userWithoutPassword } = user;
+    console.log("random", _)
+    return NextResponse.json({ user: userWithoutPassword, username }, { status: 200 });   
+
+    // return NextResponse.json({ user, username }, { status: 200 });
 
     } catch (error) {
         console.error("Login error:", error);
