@@ -6,6 +6,7 @@ import { compare } from "bcryptjs";
 // import { compare } from "bcryptjs";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret : process.env.NEXTAUTH_SECRET!,
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_AUTH_ID,
