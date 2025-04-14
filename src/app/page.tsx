@@ -259,7 +259,7 @@ const HomePage = () => {
               Create account
             </button>
             <button 
-              onClick={() => router.push(`/${session?.user?.githubUsername}/GitHubAnalysis`)}
+              onClick={handleViewMyGitHubAnalysis}
               className="px-6 py-3 bg-white border border-gray-300 text-gray-700 rounded-lg shadow hover:bg-gray-50 transition font-medium"
             >
               Try AI Analysis
