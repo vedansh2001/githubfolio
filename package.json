@@ -12,6 +12,7 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-slot": "^1.1.2",
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
