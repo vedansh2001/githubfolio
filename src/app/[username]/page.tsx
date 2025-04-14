@@ -58,7 +58,6 @@ type PR = {
 
 export default function Home({ params }: UserPageProps) {
   const { username } = params;
-  console.log("e username username: ", username);
   
 
   const [userdata, setUserdata] = useState<UserData>({

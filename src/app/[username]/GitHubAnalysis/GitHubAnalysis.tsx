@@ -461,7 +461,7 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
             <div className="max-w-4xl mx-auto mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800">
               <div className="flex items-center gap-2">
                 <Info size={20} />
-                <p>No analysis found. {isOwnProfile ? "Click the button above to generate a review." : "No analysis available for this profile."}</p>
+                <p>No analysis found. {isOwnProfile ? "Click the button above to generate a review. If it fails once, please try again" : "No analysis available for this profile."}</p>
               </div>
             </div>
           )
