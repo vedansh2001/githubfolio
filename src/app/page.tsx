@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { Search, BarChart3, User, ArrowRight, Code, ChevronRight, LogIn, Award } from "lucide-react";
 import FabarComponent from "./components/FabarComponent/FabarComponet";
+import AlertCard from "./components/ui/AlertCard";
 
 const HomePage = () => {
   const [username, setUsername] = useState("");
@@ -12,14 +13,36 @@ const HomePage = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const [barisopen, setBarisopen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">("info");
   
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username.trim()) {
-      setIsLoading(true);
-      router.push(`/${username.trim()}`);
+  
+    if (!username.trim()) return;
+  
+    setIsLoading(true);
+    const trimmedUsername = username.trim();
+  
+    try {
+      const res = await fetch(`https://api.github.com/users/${trimmedUsername}`);
+    
+      if (res.ok) {
+        router.push(`/${trimmedUsername}`);
+      } else {
+        setAlertType("error");
+        setAlertMessage("GitHub user not found. Please enter a valid username.");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      setAlertType("error");
+      setAlertMessage("Something went wrong while checking the username.");
+      console.log(error);
+      setIsLoading(false);
     }
+    
   };
+  
   const handleViewMyPortfolio = () => {
     if (session?.user?.githubUsername) {
       router.push(`/${session.user.githubUsername}`);
@@ -86,6 +109,17 @@ const HomePage = () => {
             <div className="mt-16">
               <div className="bg-white/10 rounded-lg p-5 backdrop-blur-sm">
                 <h2 className="text-xl font-medium mb-3">Browse GitHub Profiles</h2>
+
+                {alertMessage && (
+                  <div className="mt-4 max-w-xl mx-auto">
+                    <AlertCard
+                      type={alertType}
+                      message={alertMessage}
+                      onClose={() => setAlertMessage("")}
+                    />
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="max-w-xl mx-auto">
                   <div className="relative">
                     <input

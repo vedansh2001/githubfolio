@@ -78,11 +78,17 @@ export default function Home({ params }: UserPageProps) {
   const [isSkeletonLoading, setSkeletonLoading] = useState<boolean>(true);
   const [isUserDataLoading, setIsUserDataLoading] = useState(true);
   const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+  const [isInvalidUser, setIsInvalidUser] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const res = await fetch(`/api/user/?username=${username}`);
+        if (!res.ok) {
+          // If user doesn't exist or API returns error
+          setIsInvalidUser(true);
+          return;
+        }
         const data = await res.json();
         setUserId(data.user.id);
         setUserdata({
@@ -121,6 +127,30 @@ export default function Home({ params }: UserPageProps) {
     fetchAIReview();
   }, [username]);
 
+  if (isInvalidUser && !isUserDataLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-white px-4">
+        {/* <Image
+          src="/github-404.png" // Add your own illustration or just text
+          alt="User Not Found"
+          width={200}
+          height={200}
+          className="mb-6"
+        /> */}
+        <h1 className="text-3xl font-bold mb-2">User not found</h1>
+        <p className="text-lg text-center max-w-md mb-4">
+          Sorry, the GitHub user <span className="font-semibold">{username}</span> does not exist or could not be found.
+        </p>
+        <Link
+          href="/"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          Go back to home
+        </Link>
+      </div>
+    );
+  }
+  
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
       <FabarComponent barisopen={barisopen} setBarisopen={setBarisopen} />
@@ -186,7 +216,7 @@ export default function Home({ params }: UserPageProps) {
             ) : aiReview ? (
               <AIReviewCard data={aiReview} username={username}/>
             ) : (
-              <PendingAIReviewCard />
+              <PendingAIReviewCard username={username}/>
             )}
 
             {isUserDataLoading ? (

@@ -51,8 +51,8 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({username, isPinnedToShowInPinnedSe
         Pinned PRs
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {isPinnedToShowInPinnedSection.length > 0 ? (
-          isPinnedToShowInPinnedSection.map((item) => (
+        {isPinnedToShowInPinnedSection?.length > 0 ? (
+          isPinnedToShowInPinnedSection?.map((item) => (
             <div
               key={item.id}
               className="border border-gray-200 bg-gray-50 px-4 py-2 rounded-xl shadow-sm flex items-center justify-between hover:scale-[1.02] transition duration-200"

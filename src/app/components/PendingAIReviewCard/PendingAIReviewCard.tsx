@@ -1,6 +1,14 @@
 import { Lock } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
-export default function PendingAIReviewCard() {
+interface PendingAIReviewCardProps {
+  username: string;
+}
+
+export default function PendingAIReviewCard({ username }: PendingAIReviewCardProps) {
+  const { data: session } = useSession();
+
   return (
     <div className="rounded-2xl border border-dashed border-gray-300 bg-white dark:bg-gray-950 p-6 shadow-sm transition hover:shadow-md">
       <div className="flex flex-col items-center justify-center text-center space-y-4">
@@ -13,6 +21,14 @@ export default function PendingAIReviewCard() {
         <p className="text-sm text-gray-600 dark:text-gray-400 max-w-xs">
           This user hasn’t run an AI code review yet. Once available, you’ll be able to see insights about code quality, documentation, and security.
         </p>
+        {session?.user?.githubUsername === username &&
+        <Link
+        href={`/${username}/GitHubAnalysis`}
+        className="text-sm font-medium text-blue-600 hover:underline"
+      >
+        Get AI Analysis →
+      </Link>
+      }
       </div>
     </div>
   );
