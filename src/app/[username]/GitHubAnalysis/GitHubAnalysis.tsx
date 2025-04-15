@@ -105,6 +105,7 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
 
   const confirmCodeReview = async () => {
     setShowConfirmDialog(false);
+    setSkeletonloading(true);
     
     try {
       setLoading(true);
@@ -160,12 +161,14 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
         } finally {
           setLoading(false);
           setShowProgressBar(false);
+          setSkeletonloading(false);
         }
       }, 60000); // 60 sec
     } catch (error) {
       console.error("Error sending review request:", error);
       setLoading(false);
       setShowProgressBar(false);
+      setSkeletonloading(false)
     }
   };
 
