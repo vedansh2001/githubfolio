@@ -51,6 +51,8 @@ venv/
 env/
 .venv/
 .env/
+.env
+
 
 # Ignore FastAPI build/deploy files if any
 dist/
