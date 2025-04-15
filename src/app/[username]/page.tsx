@@ -83,11 +83,28 @@ export default function Home({ params }: UserPageProps) {
     const fetchUserData = async () => {
       try {
         const res = await fetch(`/api/user/?username=${username}`);
+  
         if (!res.ok) {
-          // If user doesn't exist or API returns error
-          setIsInvalidUser(true);
+          // Fallback: Fetch from GitHub directly
+          const githubRes = await fetch(`https://api.github.com/users/${username}`);
+          if (!githubRes.ok) {
+            setIsInvalidUser(true);
+            return;
+          }
+          const githubData = await githubRes.json();
+          setUserdata({
+            imageURL: githubData.avatar_url || "",
+            name: githubData.name || githubData.login || "Anonymous",
+            bio: githubData.bio || "",
+            location: githubData.location || "Location not specified",
+            followers: githubData.followers || 0,
+            following: githubData.following || 0,
+            publicRepos: githubData.public_repos || 0,
+            githubUsername: githubData.login,
+          });
           return;
         }
+  
         const data = await res.json();
         setUserId(data.user.id);
         setUserdata({
@@ -102,29 +119,30 @@ export default function Home({ params }: UserPageProps) {
         });
       } catch (err) {
         console.error("Error fetching user data:", err);
+        setIsInvalidUser(true);
       } finally {
         setIsUserDataLoading(false);
       }
     };
-
+  
     const fetchAIReview = async () => {
       try {
         setSkeletonLoading(true);
         const res = await fetch(`/api/aiAnalizerData?githubUsername=${username}`);
         const result = await res.json();
         if (result.aiReview.overallEvaluation) setAiReview(result?.aiReview?.overallEvaluation);
-        console.log("this is the ai review",result.aiReview);
-        
+        console.log("this is the ai review", result.aiReview);
       } catch (err) {
         console.error("Error fetching AI review:", err);
       } finally {
         setSkeletonLoading(false);
       }
     };
-
+  
     fetchUserData();
     fetchAIReview();
   }, [username]);
+  
 
   if (isInvalidUser && !isUserDataLoading) {
     return (
