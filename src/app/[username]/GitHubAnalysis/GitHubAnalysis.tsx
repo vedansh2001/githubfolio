@@ -157,6 +157,8 @@ const AnalysisResult = ({ githubUsername }: AnalysisResultProps) => {
             setError("Unknown error occurred.");
           }
         } catch (fetchError) {
+          console.log(fetchError);
+          
           setError("Failed to fetch updated analysis.");
         } finally {
           setLoading(false);

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import { PiPushPinSlashFill } from 'react-icons/pi';
 import PinnedReposSkeleton from './PinnedPrsSkeleton';
+import { useSession } from 'next-auth/react';
 
 type PR = {
   createdAt: string;
@@ -26,6 +27,7 @@ type PinnedPRsProps = {username: string;
 const PinnedPRs: React.FC<PinnedPRsProps> = ({username, isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection}) => {
   const [loading, setLoading] = useState(true);
     // const [isPinnedToShowInPinnedSection, setIsPinnedToShowInPinnedSection] = useState<PR[]>([]);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const fetchPinnedPRs = async () => {
@@ -66,8 +68,12 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({username, isPinnedToShowInPinnedSe
             </div>
           ))
         ) : (
-          <p className="text-gray-500 col-span-2 text-center">No pinned pull requests</p>
-        )}
+          session?.user ? (
+            <p className="text-gray-500 col-span-2 text-center">No pinned pull requests. Click on the button and start pinning your PRs</p>
+          ) : (
+          <p className="text-gray-500 col-span-2 text-center">The user has no pinned pull requests</p>
+          )
+       )}
       </div>
     </div>
   );

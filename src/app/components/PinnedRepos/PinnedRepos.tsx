@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { PiPushPinSlashFill } from "react-icons/pi";
 import PinnedReposSkeleton from "./PinnedReposSkeleton";
+import { useSession } from "next-auth/react";
 
 interface Repository {
   id: number;
@@ -17,6 +18,7 @@ interface usernameprop {
 const PinnedRepos: React.FC<usernameprop> = ({ username }) => {
   const [fetchedPinnedRepos, setFetchedPinnedRepos] = useState<Repository[]>([]);
   const [loading, setLoading] = useState(true);
+    const { data: session } = useSession();
 
   useEffect(() => {
     const fetchdata = async () => {
@@ -60,8 +62,12 @@ const PinnedRepos: React.FC<usernameprop> = ({ username }) => {
             </div>
           ))
         ) : (
-          <p className="text-gray-500 col-span-2 text-center">No pinned repositories</p>
-        )}
+          session?.user ? (
+            <p className="text-gray-500 col-span-2 text-center">No pinned repositories. Click on the button and start pinning your Repositories</p>
+          ) : (
+          <p className="text-gray-500 col-span-2 text-center">The user has no pinned Repositories</p>
+          )
+       )}
       </div>
     </div>
   );
