@@ -63,9 +63,9 @@ const PinnedRepos: React.FC<usernameprop> = ({ username }) => {
           ))
         ) : (
           session?.user ? (
-            <p className="text-gray-500 col-span-2 text-center">No pinned repositories. Click on the button and start pinning your Repositories</p>
+            <p className="w-[70%] ml-[15%] py-4 text-gray-500 col-span-2 text-center">No pinned repositories. Click on the button and start pinning your Repositories</p>
           ) : (
-          <p className="text-gray-500 col-span-2 text-center">The user has no pinned Repositories</p>
+          <p className="text-gray-500 col-span-2 text-center p-6">The user has no pinned Repositories</p>
           )
        )}
       </div>

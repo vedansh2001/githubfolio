@@ -69,9 +69,9 @@ const PinnedPRs: React.FC<PinnedPRsProps> = ({username, isPinnedToShowInPinnedSe
           ))
         ) : (
           session?.user ? (
-            <p className="text-gray-500 col-span-2 text-center">No pinned pull requests. Click on the button and start pinning your PRs</p>
+            <p className="w-[70%] ml-[15%] py-4 text-gray-500 col-span-2 text-center">No pinned pull requests. Click on the button and start pinning your PRs</p>
           ) : (
-          <p className="text-gray-500 col-span-2 text-center">The user has no pinned pull requests</p>
+          <p className="text-gray-500 col-span-2 text-center py-6">The user has no pinned pull requests</p>
           )
        )}
       </div>
