@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
  
 import React, { useState } from "react";
-import { Search, BarChart3, User, ArrowRight, Code, ChevronRight, LogIn, Award } from "lucide-react";
+import { Search, BarChart3, User, ArrowRight, Code, ChevronRight, LogIn, Award, Star } from "lucide-react";
 import FabarComponent from "./components/FabarComponent/FabarComponet";
 import AlertCard from "./components/ui/AlertCard";
 
@@ -321,6 +321,16 @@ const HomePage = () => {
             <a href="#" className="text-gray-500 hover:text-gray-700">Privacy</a>
             <a href="#" className="text-gray-500 hover:text-gray-700">Terms</a>
             <a href="https://github.com/vedansh2001" className="text-gray-500 hover:text-gray-700">GitHub</a>
+            <a
+              href="https://github.com/vedansh2001/githubfolio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-gray-500 hover:text-gray-700"
+            >
+              <Star size={16} className="fill-current text-gray-500 hover:text-gray-700" />
+              Star on GitHub
+            </a>
+
           </div>
         </footer>
       </div>
