@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GithubFolio.in
 
-## Getting Started
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/vedansh2001/githubfolio)
 
-First, run the development server:
+A GitHub portfolio website with AI-based reviews of your GitHub profile.
+
+## 📖 Overview
+
+GithubFolio.in creates personalized portfolio websites from your GitHub profile and offers AI-powered analysis of your repositories. The application fetches your GitHub data and provides comprehensive insights about your code quality, security practices, documentation, and more.
+
+## ✨ Features
+
+- **GitHub Integration**: Automatically pulls your repository data, bio, followers, and location
+- **AI-Powered Analysis**: Uses Gemini 1.5 Pro to analyze your top repositories
+- **Comprehensive Reports**: Provides detailed ratings and feedback on:
+  - Overall code quality
+  - Security practices
+  - Documentation quality
+  - Individual repository analysis
+
+## 🔧 Tech Stack
+
+- **Frontend & Backend**: Next.js
+- **Database**: PostgreSQL with Prisma ORM
+- **Authentication**: Next-Auth
+- **Deployment**: AWS EC2
+- **AI Integration**: Gemini 1.5 Pro API
+- **API Layer**: FastAPI
+
+## 🚀 How It Works
+
+1. Sign up and authenticate with your GitHub account
+2. Provide your GitHub username
+3. The application fetches basic profile information:
+   - Number of repositories
+   - GitHub bio
+   - Follower/following counts
+   - Location
+4. When you request an AI analysis:
+   - Your top 10 repositories are identified based on metrics like commits and stars
+   - Files from these repositories are combined
+   - The consolidated file is sent to Gemini 1.5 Pro API
+   - The API returns a detailed analysis based on predefined criteria
+
+## 📊 Analysis Report
+
+The AI analysis includes:
+- Overall rating
+- Code security rating
+- Code quality rating
+- Documentation rating
+- Summary of strengths and areas for improvement
+- Individual analysis for each analyzed repository
+
+## 📸 Screenshots
+
+![GithubFolio Dashboard](public/githubfolio_homepage.png)
+*Caption: GithubFolio homepage*
+
+![GithubFolio Dashboard](public/githubfolio_portfolio.png)
+*Caption: GithubFolio dashboard showing user profile and repository analytics*
+
+![AI Analysis Example](public/githubfolio_aianalysis.png)
+*Caption: Example of AI-generated repository analysis*
+
+## 🔐 Authentication
+
+The application uses Next-Auth for secure GitHub authentication, ensuring that users can only access their own portfolio and analysis data.
+
+## 🛠️ Installation & Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/vedansh2001/githubfolio.git
+
+# Navigate to project directory
+cd githubfolio
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your credentials
+
+# Set up the database
+npx prisma migrate dev
+
+# Run the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# move to ai-analysis directory
+cd ai-analysis
+
+#Create Virtual Environment
+python3 -m venv venv
+
+#Activate Virtual Environment
+venv\Scripts\activate
+
+#Install Requirements
+pip install -r requirements.txt
+
+#Run the App
+./start.sh
+
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

@@ -5,15 +5,13 @@ from analyze_github import analyze_user
 
 app = FastAPI()
 
-# CORS config so your frontend can call it
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Or restrict to your domain
+    allow_origins=["*"], 
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Pydantic model for POST request body
 class AnalyzeRequest(BaseModel):
     username: str
 
